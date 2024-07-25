@@ -1,6 +1,6 @@
 import { writable, derived } from 'svelte/store';
 import { fetchProducts, fetchSingleProduct, initializeCategories } from '../api/api';
-import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage, init } from '../utils/utils'
+import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage } from '../utils/utils'
 
 function createAppStore() {
   const { subscribe, set, update } = writable({
@@ -122,19 +122,25 @@ function createAppStore() {
 
 export const appStore = createAppStore();
 
-// export const start = (type = 'products', app = appStore) => {
-  // appStore.subscribe((app) => {
-  //   init(type, app);
-  // });
-// }
+export const initializeProducts = async (type = 'products', app = appStore) => {
+  if(type.toLowerCase() === 'products'){
+    initializeCategories(app)
+    await fetchProducts(app)
+  }
+}
 
-export const start = () => {
-  appStore.subscribe((appStore) => {
+export const start = (app = appStore) => {
+  app.subscribe((app) => {
     const mainPage = getUrlMainPage();
-    appStore.pageName = mainPage
-    renderPage(appStore.pageName);
+    app.pageName = mainPage
+    renderPage(app.pageName);
   });
 }
+
+// export const startProductPage = (type = 'products', app = appStore) => {
+//   start(app);
+//   initializeProducts(type, app);
+// }
 
 document.addEventListener('DOMContentLoaded', () => {
   appStore.update((state) => ({...state, loading: {...state.loading, page: false } }));

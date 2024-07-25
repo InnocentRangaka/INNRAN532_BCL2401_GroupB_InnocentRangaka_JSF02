@@ -1,6 +1,4 @@
 
-import { initializeCategories } from "../api/api";
-
 const TAX_RATE = Number(0.15); // Number
 const SHIPPING_COST_STANDARD = Number(5.00); // Number
 const SHIPPING_COST_EXPRESS = Number(16.00); // Number
@@ -108,10 +106,4 @@ export function getUrlMainPage () {
       ? splitUrlPathname(currentPath).pop() 
       : 'home';
     return splitedPath;
-}
-
-export const init = (type = 'products', app) => {
-    if(type.toLowerCase() === 'products'){
-      initializeCategories(app)
-    }
 }
