@@ -1,16 +1,22 @@
 <script>
   import { onMount, afterUpdate } from 'svelte';
-  import { appStore } from './store/store';
-
-  import svelteLogo from './assets/svelte.svg'
-  import viteLogo from '/vite.svg'
-  import Counter from './lib/Counter.svelte'
+  import { appStore, start } from './store/store';
+  import { init } from './utils/utils';
+  import Layout from './components/Layout.svelte';
 
   let app;
   $: app = $appStore;
   let { loading } = $appStore
 
+  start();
+
   onMount(async () => {
+    console.log(app.pageName)
+
+    setTimeout(() => {
+      app.loading.page = false;
+    }, 2000);
+
     // await fetchInitialData();
     // await fetchProductsData();
     console.log('hello1')
@@ -24,36 +30,7 @@
 
 </script>
 
-<main>
-
-  {#if app.loading.page}
-    <div>
-      <a href="https://vitejs.dev" target="_blank" rel="noreferrer">
-        <img src={viteLogo} class="logo" alt="Vite Logo" />
-      </a>
-      <a href="https://svelte.dev" target="_blank" rel="noreferrer">
-        <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
-      </a>
-    </div>
-  {:else}
-    <h1>Vite + Svelte</h1>
-
-    <div class="card">
-      <Counter />
-    </div>
-
-    <p>
-      Check out <a href="https://github.com/sveltejs/kit#readme" target="_blank" rel="noreferrer">SvelteKit</a>, the official Svelte app framework powered by Vite!
-    </p>
-
-    <p class="read-the-docs">
-      Click on the Vite and Svelte logos to learn more
-    </p>
-  {/if}
-
-  
-  
-</main>
+<Layout />
 
 <style>
   .logo {

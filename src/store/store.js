@@ -1,9 +1,6 @@
 import { writable, derived } from 'svelte/store';
-import { fetchProducts, fetchSingleProduct } from '../api/api';
-
-const TAX_RATE = Number(0.15); // Number
-const SHIPPING_COST_STANDARD = Number(5.00); // Number
-const SHIPPING_COST_EXPRESS = Number(16.00); // Number
+import { fetchProducts, fetchSingleProduct, initializeCategories } from '../api/api';
+import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage, init } from '../utils/utils'
 
 function createAppStore() {
   const { subscribe, set, update } = writable({
@@ -58,11 +55,10 @@ function createAppStore() {
     subscribe,
     set,
     update,
-    initializeCategories: async () => {
-      const response = await fetch(`${API_URL}/categories`);
-      const categories = await response.json();
-      update((state) => ({ ...state, categories }));
-    },
+    getUrlMainPage,
+    renderPage: () => renderPage(),
+    fetchPage,
+    initializeCategories,
     fetchProducts,
     fetchSingleProduct,
     fetchFavourites: async () => {
@@ -124,52 +120,21 @@ function createAppStore() {
   };
 }
 
-// Helper functions
-function calculateCartTotalItems(cartItems) {
-  return Object.values(cartItems).length;
-}
-
-export const calculateSubTotalAmount = (items) => {
-  const total = items.reduce((amount, item) => amount + (item.price * item.quantity), 0);
-  return parseFloat(total).toFixed(2);
-};
-
-export const calculateCartTotal = (items) => {
-  const subTotal = parseFloat(calculateSubTotalAmount(items));
-  const tax = subTotal * TAX_RATE;
-  const shipping = SHIPPING_COST_STANDARD;
-  return (subTotal + tax + shipping).toFixed(2);
-};
-
-function calculateAmount(item) {
-  return (item.price * item.quantity).toFixed(2);
-}
-
-function calculateTotalCartAmount(cart) {
-  const subTotal = parseFloat(calculateSubTotalAmount(cart.cartItems));
-  const shipping = parseFloat(cart.shippingRate);
-  const tax = parseFloat(calculateTaxAmount(cart));
-  return (subTotal + shipping + tax).toFixed(2);
-}
-
-export function calculateTaxAmount(cart) {
-  return (parseFloat(calculateSubTotalAmount(cart.cartItems)) * TAX_RATE).toFixed(2);
-}
-
-// Create a copy before modifying the cart to avoid side effects
-function getNewCartItems(cartItems, productId, quantity) {
-  const newCartItems = { ...cartItems }; // Spread operator for a copy
-
-  if (newCartItems[productId]) {
-    newCartItems[productId].quantity += quantity;
-  } else {
-    newCartItems[productId] = { quantity };
-  }
-
-  return newCartItems;
-}
-
 export const appStore = createAppStore();
+
+// export const start = (type = 'products', app = appStore) => {
+  // appStore.subscribe((app) => {
+  //   init(type, app);
+  // });
+// }
+
+export const start = () => {
+  appStore.subscribe((appStore) => {
+    const mainPage = getUrlMainPage();
+    appStore.pageName = mainPage
+    renderPage(appStore.pageName);
+  });
+}
 
 document.addEventListener('DOMContentLoaded', () => {
   appStore.update((state) => ({...state, loading: {...state.loading, page: false } }));
