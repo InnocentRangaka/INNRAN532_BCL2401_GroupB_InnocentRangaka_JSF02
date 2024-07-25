@@ -1,69 +1,47 @@
-### INNRAN532_BCL2401_GroupB_InnocentRangaka_JSF02
+# Svelte + Vite
 
-# E-Commerce Store in Svelte
+This template should help get you started developing with Svelte in Vite.
 
-## Project Description
+## Recommended IDE Setup
 
-This project is a refactor of an existing e-commerce store, converting it from React to Svelte. The application allows users to browse a grid of product cards, view product details, filter and sort products, and navigate between views. All product data is fetched from the Fake Store API, ensuring that no shop data is hardcoded into the application.
+[VS Code](https://code.visualstudio.com/) + [Svelte](https://marketplace.visualstudio.com/items?itemName=svelte.svelte-vscode).
 
-## Features
+## Need an official Svelte framework?
 
-- **Product Grid View**
-  - Displays a grid of product cards
-  - Each card shows an image, title, price, and category of the product
-  - Users can navigate to a detailed view of the product
+Check out [SvelteKit](https://github.com/sveltejs/kit#readme), which is also powered by Vite. Deploy anywhere with its serverless-first approach and adapt to various platforms, with out of the box support for TypeScript, SCSS, and Less, and easily-added support for mdsvex, GraphQL, PostCSS, Tailwind CSS, and more.
 
-- **Product Detailed View**
-  - Shows the product title, description, image, price, category, rating, and number of reviews
-  - Users can navigate back to the product grid view
+## Technical considerations
 
-- **Data Fetching**
-  - All shop data is loaded via fetch calls from the Fake Store API
-  - Product data is fetched from individual product endpoints when viewing a specific product
-  - Loading states are displayed while data is being fetched
+**Why use this over SvelteKit?**
 
-- **Filtering and Sorting**
-  - Users can filter products by category (categories fetched from the API)
-  - Users can sort products by lowest and highest price
-  - Users can reset filters and sorting without refreshing the app
-  - Applied filters and sorting are preserved after navigating to a detailed view and returning to the home page (without using local storage)
+- It brings its own routing solution which might not be preferable for some users.
+- It is first and foremost a framework that just happens to use Vite under the hood, not a Vite app.
 
-## Technologies Used
+This template contains as little as possible to get started with Vite + Svelte, while taking into account the developer experience with regards to HMR and intellisense. It demonstrates capabilities on par with the other `create-vite` templates and is a good starting point for beginners dipping their toes into a Vite + Svelte project.
 
-- **Svelte**: Front-end framework for building user interfaces
-- **JavaScript**: Programming language for the web
-- **Fetch API**: For making HTTP requests to fetch data from the Fake Store API
-- **HTML**: Markup language for structuring web content
-- **CSS**: Stylesheet language for designing web pages
+Should you later need the extended capabilities and extensibility provided by SvelteKit, the template has been structured similarly to SvelteKit so that it is easy to migrate.
 
-## Setup Instructions
+**Why `global.d.ts` instead of `compilerOptions.types` inside `jsconfig.json` or `tsconfig.json`?**
 
-1. **Clone the Repository**
-   ```bash
-   git clone https://github.com/InnocentRangaka/INNRAN532_BCL2401_GroupB_InnocentRangaka_JSF02.git
-   ```
+Setting `compilerOptions.types` shuts out all other types not explicitly listed in the configuration. Using triple-slash references keeps the default TypeScript setting of accepting type information from the entire workspace, while also adding `svelte` and `vite/client` type information.
 
-2. **Install Dependencies**
-   ```bash
-   npm install
-   ```
+**Why include `.vscode/extensions.json`?**
 
-3. **Run the Application**
-   ```bash
-   npm run dev
-   ```
+Other templates indirectly recommend extensions via the README, but this file allows VS Code to prompt the user to install the recommended extension upon opening the project.
 
-4. **Open the Application**
-   - Open your browser and navigate to `http://localhost:5000` to see the application in action.
+**Why enable `checkJs` in the JS template?**
 
-## API Endpoints
+It is likely that most cases of changing variable types in runtime are likely to be accidental, rather than deliberate. This provides advanced typechecking out of the box. Should you like to take advantage of the dynamically-typed nature of JavaScript, it is trivial to change the configuration.
 
-- **Products**
-  - `GET /products`: Fetch all products
-  - `GET /products/:id`: Fetch a single product by its ID
-  - `GET /products/categories`: Fetch all product categories
+**Why is HMR not preserving my local component state?**
 
-## Documentation
+HMR state preservation comes with a number of gotchas! It has been disabled by default in both `svelte-hmr` and `@sveltejs/vite-plugin-svelte` due to its often surprising behavior. You can read the details [here](https://github.com/sveltejs/svelte-hmr/tree/master/packages/svelte-hmr#preservation-of-local-state).
 
-- **Code Documentation**
-  - The code is documented using JSDoc. Comments are included to describe the functionality of different parts of the code.
+If you have state that's important to retain within a component, consider creating an external store which would not be replaced by HMR.
+
+```js
+// store.js
+// An extremely simple external store
+import { writable } from 'svelte/store'
+export default writable(0)
+```
