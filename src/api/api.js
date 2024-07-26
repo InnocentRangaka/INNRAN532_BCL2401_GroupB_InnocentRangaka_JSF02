@@ -30,8 +30,12 @@ export const fetchProducts = async (app) => {
 }
 export const fetchSingleProduct = async (id, app) => {
     const response = await fetch(`${API_URL}products/${id}`);
-    const product = await response.json();
-    app.update((state) => ({ ...state, selectedProduct: product }));
+    const productData = await response.json();
+    app.update((state) => ({ 
+        ...state, 
+        viewProduct: productData,
+        // loading: { ...state.loading, products: false },
+    }));
 }
 
 export const initializeCategories = async (app) => {

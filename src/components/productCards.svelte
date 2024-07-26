@@ -1,5 +1,5 @@
 <script>
-  import { get } from 'svelte/store';
+    import { get } from 'svelte/store';
     import { onMount, afterUpdate } from "svelte";
     import { link } from 'svelte-spa-router';
     import { appStore } from "../store/store";

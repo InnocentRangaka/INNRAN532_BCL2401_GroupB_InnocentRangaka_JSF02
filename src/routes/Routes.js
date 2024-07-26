@@ -8,6 +8,7 @@ export default {
     '/': Home,
     '/product/:id': wrap({
         asyncComponent: () => import('../pages/ProductDetailView.svelte'),
+        props: (params) => ({ id: params.id }),
     }),
     '/cart': wrap({
         asyncComponent: () => import('../pages/Cart.svelte'),

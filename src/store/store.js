@@ -10,8 +10,10 @@ function createAppStore() {
     formatPrice: (price) => price.toFixed(2),
 
     // Products and loading state
+    viewProduct: [],
     products: [],
     originalProducts: [],
+    selectedProduct: {},
     loading: {
       products: true, // Specific loading states
       cart: false,
@@ -129,6 +131,7 @@ export const initializeProducts = async (type = 'products', app = appStore) => {
   if(type.toLowerCase() === 'products'){
     await initializeCategories(app)
     await fetchProducts(app)
+    // console.log("hello")
   }
 }
 

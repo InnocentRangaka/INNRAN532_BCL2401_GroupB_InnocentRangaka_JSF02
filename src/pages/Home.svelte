@@ -2,7 +2,7 @@
     import { onMount, afterUpdate } from 'svelte';
     import { appStore, initializeProducts } from "../store/store";
     import ProductCards from '../components/ProductCards.svelte';
-    import ProductSkeleton from '../components/ProductSkeleton.svelte';
+    import ProductCardSkeleton from '../components/ProductCardSkeleton.svelte';
 
     let app;
     $: app = $appStore;
@@ -28,7 +28,7 @@
           }
         >
           {#each Array(20) as i}
-            <ProductSkeleton />
+            <ProductCardSkeleton />
           {/each}
         </div>
       {/if}
