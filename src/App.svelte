@@ -2,6 +2,7 @@
   import { onMount, afterUpdate } from 'svelte';
   import { appStore, start } from './store/store';
   import Layout from './components/Layout.svelte';
+  import Router from './routes/Router.svelte';
 
   let app;
   $: app = $appStore;
@@ -28,5 +29,7 @@
 
 </script>
 
-<Layout />
+<Layout >
+  <Router />
+</Layout>
 

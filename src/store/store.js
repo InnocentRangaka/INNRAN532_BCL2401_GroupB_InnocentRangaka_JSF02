@@ -1,4 +1,5 @@
-import { writable, derived } from 'svelte/store';
+import { writable, derived, get } from 'svelte/store';
+import {location, querystring} from 'svelte-spa-router'
 import { fetchProducts, fetchSingleProduct, initializeCategories } from '../api/api';
 import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage } from '../utils/utils'
 
@@ -108,6 +109,7 @@ function createAppStore() {
         return { ...state, wishList: newWishList };
       });
     },
+    isInWishList: () => {},
     setSearchTerm: (searchTerm) => {
       update((state) => ({ ...state, searchTerm }));
     },
@@ -122,9 +124,15 @@ function createAppStore() {
 
 export const appStore = createAppStore();
 
+appStore.subscribe((state) => {
+  console.log('Store updated:', state);
+});
+
+export const appState = get(appStore);
+
 export const initializeProducts = async (type = 'products', app = appStore) => {
   if(type.toLowerCase() === 'products'){
-    initializeCategories(app)
+    await initializeCategories(app)
     await fetchProducts(app)
   }
 }

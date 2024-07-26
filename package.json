@@ -9,12 +9,16 @@
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@crownframework/svelte-error-boundary": "^1.0.3",
     "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "autoprefixer": "^10.4.19",
+    "postcss": "^8.4.40",
     "svelte": "^4.2.18",
-    "tailwindcss": "^3.4.6",
+    "tailwindcss": "^3.4.7",
     "vite": "^5.3.4"
   },
   "dependencies": {
+    "svelte-error-boundary": "^1.0.2",
     "svelte-spa-router": "^4.0.1"
   }
 }
