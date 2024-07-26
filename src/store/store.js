@@ -114,15 +114,6 @@ function createAppStore() {
 
       return stateWishList.hasOwnProperty(id);
     },
-    setSearchTerm: (searchTerm) => {
-      update((state) => ({ ...state, searchTerm }));
-    },
-    setSorting: (sorting) => {
-      update((state) => ({ ...state, sorting }));
-    },
-    setFilterItem: (filterItem) => {
-      update((state) => ({ ...state, filterItem }));
-    },
   };
 }
 

@@ -4,9 +4,12 @@
   
     const { subscribe, update, fetchProducts, setSorting } = appStore;
   
-    let searchTerm = get(appStore).searchTerm
-    let filterItem;
+    let searchTerm;
+    subscribe((state) => {
+        searchTerm = state.searchTerm;
+    });
 
+    let filterItem;
     subscribe((state) => {
         filterItem = state.filterItem;
     });
@@ -36,12 +39,21 @@
       update((state) => ({ ...state, filterItem: item }));
 
       fetchProducts(appStore);
-
-      console.log(filterItem)
     };
   
-    const setSearchTerm = (term) => {
+    const searchProducts = (term) => {
       update((state) => ({ ...state, searchTerm: term }));
+      let searchedProducts,
+      stateProducts = get(appStore).originalProducts;
+
+      if (searchTerm.trim() !== '') {
+        const filteredProducts = stateProducts.filter((product) => product.title.toLowerCase().includes(searchTerm.toLowerCase()));
+        searchedProducts = JSON.parse(JSON.stringify(filteredProducts));
+      } else {
+        searchedProducts = JSON.parse(JSON.stringify(stateProducts));
+      }
+
+        update((state) => ({ ...state, products: searchedProducts }));
     };
   
     const sortProducts = (sort) => {
@@ -59,10 +71,6 @@
 
       update((state) => ({ ...state, products: sortedProducts }));
     };
-    
-    const filterSvg = (filterItem) => {
-      // Implement the filterSvg function logic here
-    };
   
     const capitalizeFirstLetters = (str) => {
       return str ? str.replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null;;
@@ -72,7 +80,7 @@
 
   <div class="w-full grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center">
     <!-- Filter -->
-    <form on:submit|preventDefault={() => setSearchTerm(searchTerm)}>
+    <form on:submit|preventDefault={() => searchProducts(searchTerm)}>
       <div class="flex lg:w-[31.25rem] sm:w-[95%] md:w-full relative">
         <button
           on:click={toggleFilterDropdown}
@@ -135,7 +143,7 @@
             class="p-2.5 w-full z-20 text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
             placeholder="Search products..."
             bind:value={searchTerm}
-            on:input={() => setSearchTerm(searchTerm)}
+            on:input={() => searchProducts(searchTerm)}
           />
           <button
             type="submit"
