@@ -1,6 +1,7 @@
 <script>
   import { onMount, afterUpdate } from "svelte";
   import { appStore } from "../store/store";
+  import SearchFilterSort from "./SearchFilterSort.svelte"
   // import { navigate } from './router.js';
   // import { pageLoading, loading, pageName } from '../store/store.js';
 
@@ -22,6 +23,7 @@
     </div> -->
 
     <div class="page-content">
+        <SearchFilterSort />
         <h1>{app.pageName}</h1>
         <slot></slot>
     </div>

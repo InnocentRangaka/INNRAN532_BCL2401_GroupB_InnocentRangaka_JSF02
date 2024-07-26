@@ -1,7 +1,8 @@
 <script>
     import { onMount, afterUpdate } from 'svelte';
     import { appStore, initializeProducts } from "../store/store";
-    import ProductCards from '../components/productCards.svelte';
+    import ProductCards from '../components/ProductCards.svelte';
+    import ProductSkeleton from '../components/ProductSkeleton.svelte';
 
     let app;
     $: app = $appStore;
@@ -14,9 +15,6 @@
             app.loading.page = false;
         }, 2000);
     })
-
-    
-    console.log(products)
     
 </script>
 
@@ -30,8 +28,7 @@
           }
         >
           {#each Array(20) as i}
-            <!-- <div>{@html productSkeleton()}</div> -->
-            <h1>Loading...</h1>
+            <ProductSkeleton />
           {/each}
         </div>
       {/if}
