@@ -1,4 +1,3 @@
-import { get } from 'svelte/store';
 // import { appStore } from '../store/store';
 
 const API_URL = 'https://fakestoreapi.com/';
@@ -6,10 +5,14 @@ const API_URL = 'https://fakestoreapi.com/';
 export const fetchProducts = async (app) => {
     let foundProducts = []
 
-    const appState = get(app);
-    if (appState.filterItem !== 'All categories') {
+    let stateFilterItem;
+    app.subscribe((state) => {
+        stateFilterItem = state.filterItem;
+    });
+    
+    if (stateFilterItem !== 'All categories') {
         app.update((state) => ({ ...state, loading: { ...state.loading, products: true } }));
-        const response = await fetch(`${API_URL}products/category/${appState.filterItem}`);
+        const response = await fetch(`${API_URL}products/category/${stateFilterItem}`);
         foundProducts = await response.json();
     }
     else{

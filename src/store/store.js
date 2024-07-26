@@ -109,7 +109,11 @@ function createAppStore() {
         return { ...state, wishList: newWishList };
       });
     },
-    isInWishList: () => {},
+    isInWishList: (id) => {
+      let stateWishList = get(appStore).wishList;
+
+      return stateWishList.hasOwnProperty(id);
+    },
     setSearchTerm: (searchTerm) => {
       update((state) => ({ ...state, searchTerm }));
     },
@@ -124,11 +128,11 @@ function createAppStore() {
 
 export const appStore = createAppStore();
 
-appStore.subscribe((state) => {
-  console.log('Store updated:', state);
-});
+// appStore.subscribe((state) => {
+//   console.log('Store updated:', state);
+// });
 
-export const appState = get(appStore);
+// export const appState = get(appStore);
 
 export const initializeProducts = async (type = 'products', app = appStore) => {
   if(type.toLowerCase() === 'products'){

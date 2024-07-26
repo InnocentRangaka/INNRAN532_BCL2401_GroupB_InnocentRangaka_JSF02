@@ -1,15 +1,16 @@
 <script>
+  import { get } from 'svelte/store';
     import { onMount, afterUpdate } from "svelte";
     import { link } from 'svelte-spa-router';
-    import { appStore, appState } from "../store/store";
+    import { appStore } from "../store/store";
 
     let products = [];
     $: products = $appStore.products;
     let currency = '$';
     $: currency = $appStore.currency;
     let app = appStore;
-    let cart = appState.cart;
-    let modal = appStore.modal
+    let cart = get(appStore).cart;
+    let modal = get(appStore).modal;
 
 </script>
   
@@ -19,6 +20,7 @@
         <a 
           href="/product/{product.id}"
           use:link
+          class="flex-1 flex flex-col"
         >
           <img
             class="object-contain h-48 mt-3 cursor-pointer"
