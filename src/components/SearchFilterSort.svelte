@@ -2,7 +2,7 @@
     import { get } from 'svelte/store';
     import { appStore } from '../store/store';
   
-    const { subscribe, update } = appStore;
+    const { subscribe, update, fetchProducts, setSorting } = appStore;
   
     let searchTerm = get(appStore).searchTerm
     let filterItem;
@@ -17,7 +17,11 @@
     });
 
     // $: dropdownOpen = get(appStore).dropdownOpen;
-    let sorting = get(appStore).sorting;
+    let sorting;
+    subscribe((state) => {
+        sorting = state.sorting;
+    });
+
     let categories;
     subscribe((state) => {
         categories = state.categories;
@@ -31,20 +35,29 @@
       update((state) => ({ ...state, dropdownOpen: false }))
       update((state) => ({ ...state, filterItem: item }));
 
+      fetchProducts(appStore);
+
       console.log(filterItem)
     };
   
     const setSearchTerm = (term) => {
-      searchTerm = term;
       update((state) => ({ ...state, searchTerm: term }));
     };
   
-    const setSorting = (sort) => {
-      sorting = sort;
+    const sortProducts = (sort) => {
       update((state) => ({ ...state, sorting: sort }));
+      let stateProducts,
+      sortedProducts;
 
-      
-      console.log(sort, get(appStore).sorting, get(appStore).products)
+      if (sorting !== 'default') {
+        stateProducts = get(appStore).products
+        sortedProducts = stateProducts.sort((a, b) => sorting === 'low' ? a.price - b.price : b.price - a.price);
+      } else {
+        stateProducts = get(appStore).originalProducts
+        sortedProducts = JSON.parse(JSON.stringify(stateProducts));
+      }
+
+      update((state) => ({ ...state, products: sortedProducts }));
     };
     
     const filterSvg = (filterItem) => {
@@ -52,12 +65,12 @@
     };
   
     const capitalizeFirstLetters = (str) => {
-      return str.replace(/\b\w/g, char => char.toUpperCase());
+      return str ? str.replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null;;
     };
     
   </script>
-  
-  <div class="grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 w-full max-w-xl mx-auto px-2 md:px-0 justify-center">
+
+  <div class="w-full grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center">
     <!-- Filter -->
     <form on:submit|preventDefault={() => setSearchTerm(searchTerm)}>
       <div class="flex lg:w-[31.25rem] sm:w-[95%] md:w-full relative">
@@ -68,7 +81,7 @@
           type="button"
           title="filter button"
         >
-            {filterItem}
+            {capitalizeFirstLetters(filterItem)}
             <svg
             class={
                 "w-2.5 h-2.5 ms-2.5 "
@@ -144,10 +157,10 @@
     </form>
   
     <!-- Sort -->
-    <div class="flex sm:w-[95%] max-w-[21rem] max-w-[21rem] md:w-full">
+    <div class="flex sm:w-[95%] max-w-[21rem] md:w-full">
       <label for="sort" class="w-20 my-auto font-semibold">Sort by:</label>
       <select
-        on:change={(e) => setSorting(e.target.value)}
+        on:change={(e) => sortProducts(e.target.value)}
         bind:value={sorting}
         id="sort"
         class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"

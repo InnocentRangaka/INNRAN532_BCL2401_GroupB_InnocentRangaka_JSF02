@@ -30,7 +30,7 @@
         <!-- SwiftCart Logo -->
         <a href="/">
           <button class="flex items-center space-x-3 rtl:space-x-reverse">
-            <img src="/online-shop.png" class="h-8" alt="SwiftCart Logo" />
+            <img src="/src/assets/online-shop.png" class="h-8" alt="SwiftCart Logo" />
             <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-700 md:hover:text-blue-700">
               SwiftCart
             </span>
