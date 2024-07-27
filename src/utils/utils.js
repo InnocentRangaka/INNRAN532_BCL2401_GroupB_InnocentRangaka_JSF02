@@ -95,15 +95,31 @@ export function splitUrlPathname(urlpath) {
 
 export function getCurrentUrlPath(){
     const url = new URL(window.location.href);
-    return url.pathname ? url.pathname : '';
+    const replaceOrigin = url.href.replace(url.origin, '').replace(url.search, '')
+    const cleanUrl = replaceOrigin.startsWith('/#/') ? replaceOrigin.replace('/#/', '/') : replaceOrigin;
+    return url.pathname && url.pathname === cleanUrl ? url.pathname : cleanUrl;
 }
 
 export function getUrlMainPage () {
-    const currentPath = getCurrentUrlPath().replace(/^\/+|\/+$/g, '')
-    const splitedPath = currentPath && currentPath.length == 1 
-      ? splitUrlPathname(currentPath).shift() 
-      : currentPath && currentPath.length >= 2
-      ? splitUrlPathname(currentPath).pop() 
-      : 'home';
-    return splitedPath;
+    let newName;
+    const currentPath = getCurrentUrlPath().replace(/^\/+|\/+$/g, '');
+    const splitedPath = splitUrlPathname(currentPath);
+    const first = splitedPath.shift(),
+    last = splitedPath.pop();
+
+    const isProductDetailPage = first ? first.includes('product') : '';
+
+    if(isProductDetailPage){
+        newName = first;
+    }
+    
+    if(!isProductDetailPage) {
+        newName = currentPath && currentPath.length == 1 
+        ? first 
+        : currentPath && currentPath.length >= 2
+        ? last 
+        : 'home';
+    }
+
+    return newName ? newName : currentPath;
 }

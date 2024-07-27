@@ -1,10 +1,18 @@
 import { writable, derived, get } from 'svelte/store';
-import {location, querystring} from 'svelte-spa-router'
+import { location, params, querystring } from 'svelte-spa-router'
 import { fetchProducts, fetchSingleProduct, initializeCategories } from '../api/api';
 import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage } from '../utils/utils'
 
 function createAppStore() {
   const { subscribe, set, update } = writable({
+    currentLocation: {
+      path: '',
+      params: '',
+      query: '',
+      route: '',
+      userData: '',
+      componentName: '',
+    },
     // Grouped currency and formatting
     currency: '$',
     formatPrice: (price) => price.toFixed(2),
@@ -116,6 +124,49 @@ function createAppStore() {
 
       return stateWishList.hasOwnProperty(id);
     },
+    updateUrlLocation: ({path = '', params = '', query = '', route = '', userData = '', componentName = ''}) => {
+      update((state) => ({ 
+        ...state,
+        currentLocation: {
+          path: path,
+          params: params,
+          query: query,
+          route: route,
+          userData: userData,
+          componentName: componentName,
+        },
+      }));
+    },
+    getLocation: () => {
+      // let locationPath;
+      // let windowLocationPath;
+      
+      // let urlpath;
+      // $: urlpath = get(appStore).currentLocation 
+      
+      // subscribe((state) => {
+      //   windowLocationPath = window.location.href.replace(window.location.origin, '');
+      //   locationPath = get(location);
+
+      //   state.currentLocationPath = windowLocationPath
+
+      //   console.log('p', locationPath, windowLocationPath)
+      //   return { ...state, currentLocationPath: locationPath }
+      // });
+
+      // update((state) => ({ ...state, currentLocationPath: get(location) }))
+      // subscribe((state) => {
+      //   urlpath = state.currentLocation ;
+      // });
+
+      // if(locationPath !== urlpath){
+      //   urlpath = locationPath
+      //   console.log('p1',urlpath)
+      //   update((state) => ({ ...state, currentLocation: locationPath }))
+      // }
+      
+      // console.log('p2',urlpath, locationPath)
+    },
   };
 }
 
@@ -135,12 +186,16 @@ export const initializeProducts = async (type = 'products', app = appStore) => {
   }
 }
 
+let mainPage;
+
 export const start = (app = appStore) => {
+  // app.getLocation(app)
   app.subscribe((app) => {
-    const mainPage = getUrlMainPage();
-    app.pageName = mainPage
-    renderPage(app.pageName);
+    mainPage = getUrlMainPage();
+    app.pageName = mainPage;
   });
+
+  renderPage(app.pageName);
 }
 
 // export const startProductPage = (type = 'products', app = appStore) => {

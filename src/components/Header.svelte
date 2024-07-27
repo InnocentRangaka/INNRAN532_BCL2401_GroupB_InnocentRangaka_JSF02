@@ -1,6 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { fly } from 'svelte/transition';
+    import { link } from 'svelte-spa-router';
   
     let mobileMenuOpen = false;
     let categories = [];
@@ -62,7 +63,7 @@
             <div class="hidden md:block md:w-auto" id="navbar-dropdown">
               <ul class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
                 <li>
-                  <a href="/wishlist" class="block py-2 px-3 relative text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+                  <a href="/wishlist" use:link class="block py-2 px-3 relative text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                     Wishlist
                     {#if wishListItems}
                       <div class="t-0 absolute -right-4 -top-4">
@@ -72,7 +73,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="/cart" class="group hover:bg-gray-100 md:hover:bg-transparent">
+                  <a href="/cart" use:link class="group hover:bg-gray-100 md:hover:bg-transparent">
                     <div class="hidden lg:block md:block relative">
                       {#if cart.totalItems}
                         <div class="t-0 absolute left-3 -top-4">
@@ -87,7 +88,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="/auth/login" class="block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+                  <a href="/auth/login" use:link class="block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                     Login
                   </a>
                 </li>
@@ -109,7 +110,7 @@
               </li>
             {/each}
             <li>
-              <a href="/wishlist" class="block py-2 px-3 relative text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+              <a href="/wishlist" use:link class="block py-2 px-3 relative text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                 Wishlist
                 {#if wishListItems}
                   <div class="t-0 absolute left-[75px] top-2">
@@ -119,7 +120,7 @@
               </a>
             </li>
             <li>
-              <a href="/cart" class="relative lg:hidden md:hidden py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+              <a href="/cart" use:link class="relative lg:hidden md:hidden py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                 Cart
                 {#if cart.totalItems}
                   <div class="t-0 absolute -right-5 top-2">
@@ -129,7 +130,7 @@
               </a>
             </li>
             <li>
-              <a href="/auth/login" class="block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+              <a href="/auth/login" use:link class="block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                 Login
               </a>
             </li>
