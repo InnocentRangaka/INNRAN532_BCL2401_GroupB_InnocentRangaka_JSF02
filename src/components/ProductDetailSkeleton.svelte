@@ -1,15 +1,11 @@
 <script></script>
 
-<div class="top-0 left-0 w-full h-full flex justify-center items-center bg-opacity-70">
-    <div class="bg-white rounded-lg p-4 w-1/2 mt-6 sm:mt-8 lg:flex lg:items-start lg:max-w-6xl xl:max-w-7xl border border-gray-200 dark:border-gray-700 ">
+<div class="h-full flex justify-center items-center bg-opacity-70">
+    <div class="container bg-white rounded-lg p-4 w-full mt-6 sm:mt-8 lg:flex lg:items-start border border-gray-200 dark:border-gray-700 ">
         <div
             role="status"
             class="bg-white w-full h-full p-4 rounded-lg shadow animate-pulse"
         >
-            <!-- Close Button -->
-            <div class="flex justify-end mb-4">
-            <div class="h-2 w-4 bg-gray-200 rounded-full dark:bg-gray-700"></div>
-            </div>
 
             <!-- Grid Container -->
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -37,7 +33,7 @@
                 <div class="h-4 w-1/2 bg-gray-200 rounded-full dark:bg-gray-700 mb-2.5"></div>
 
                 <!-- Category Placeholder -->
-                <div class="h-3 w-1/3 bg-gray-200 rounded-full dark:bg-gray-700 w-24 mb-2"></div>
+                <div class="h-3 w-1/3 bg-gray-200 rounded-full dark:bg-gray-700 mb-2"></div>
 
                 <!-- Price Placeholder -->
                 <div class="h-7 w-1/2.5 bg-gray-200 rounded-full dark:bg-gray-700 w-20 mb-5"></div>

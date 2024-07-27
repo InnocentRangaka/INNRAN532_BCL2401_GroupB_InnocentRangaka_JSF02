@@ -78,7 +78,7 @@
     
   </script>
 
-  <div class="w-full grid lg:flex gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center">
+  <div class="container grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center">
     <!-- Filter -->
     <form on:submit|preventDefault={() => searchProducts(searchTerm)}>
       <div class="flex lg:w-[31.25rem] sm:w-[95%] md:w-full relative">
@@ -164,19 +164,21 @@
       </div>
     </form>
   
-    <!-- Sort -->
-    <div class="flex sm:w-[95%] max-w-[21rem] md:w-full">
-      <label for="sort" class="w-20 my-auto font-semibold">Sort by:</label>
-      <select
-        on:change={(e) => sortProducts(e.target.value)}
-        bind:value={sorting}
-        id="sort"
-        class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-      >
-        <option value="default">Default</option>
-        <option value="low">Price: Low to High</option>
-        <option value="high">Price: High to Low</option>
-      </select>
+    <div class="flex w-full items-end justify-end ">
+      <!-- Sort -->
+      <div class="flex max-w-[21rem] w-full">
+        <label for="sort" class="w-20 my-auto mr-2 font-semibold">Sort by:</label>
+        <select
+          on:change={(e) => sortProducts(e.target.value)}
+          bind:value={sorting}
+          id="sort"
+          class="p-2.5 w-full text-sm text-gray-900 bg-gray-50 rounded-e-lg border-s-gray-50 border-s-2 border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
+        >
+          <option value="default">Default</option>
+          <option value="low">Price: Low to High</option>
+          <option value="high">Price: High to Low</option>
+        </select>
+      </div>
     </div>
   </div>
   
