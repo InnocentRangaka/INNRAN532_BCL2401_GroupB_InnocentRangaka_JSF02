@@ -48,6 +48,10 @@ function createAppStore() {
       shippingRate: 0,
       shippingMethod: 'standard',
       cartItems: {},
+      totalItems: 0, 
+      subTotalAmount: 0, 
+      taxAmount: 0,
+      totalAmount: 0,
     },
 
     // Wishlist management
@@ -77,7 +81,7 @@ function createAppStore() {
       const favourites = await response.json();
       update((state) => ({ ...state, wishList: favourites }));
     },
-    addToCart: (product) => {
+    addToCart: (product, eventTarget = null) => {
       update((state) => {
         const newCartItems = { ...state.cart.cartItems };
         if (newCartItems[product.id]) {
@@ -86,11 +90,20 @@ function createAppStore() {
         } else {
           newCartItems[product.id] = { ...product, quantity: 1, totalPrice: product.price };
         }
-        const cartTotalItems = calculateCartTotal(newCartItems);
-        const cartTaxAmount = calculateTaxAmount(cartTotalItems);
+        const cartTotalItems = newCartItems ? Object.values(newCartItems).length : 0;
+        const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
+        const cartTaxAmount = calculateTaxAmount(newCartItems);
+        const cartTotalAmount = calculateCartTotal(newCartItems);
+
         return {
           ...state,
-          cart: { ...state.cart, cartItems: newCartItems, cartTotalItems, cartTaxAmount },
+          cart: { ...state.cart, 
+            cartItems: newCartItems, 
+            totalItems: cartTotalItems,
+            subTotalAmount: cartSubTotalAmount, 
+            taxAmount: cartTaxAmount, 
+            totalAmount: cartTotalAmount,
+          },
         };
       });
     },
@@ -100,11 +113,20 @@ function createAppStore() {
         if (newCartItems[id]) {
           delete newCartItems[id];
         }
-        const cartTotalItems = calculateCartTotal(newCartItems);
-        const cartTaxAmount = calculateTaxAmount(cartTotalItems);
+        const cartTotalItems = newCartItems ? Object.values(newCartItems).length : 0;
+        const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
+        const cartTaxAmount = calculateTaxAmount(newCartItems);
+        const cartTotalAmount = calculateCartTotal(newCartItems);
+
         return {
           ...state,
-          cart: { ...state.cart, cartItems: newCartItems, cartTotalItems, cartTaxAmount },
+          cart: { ...state.cart, 
+            cartItems: newCartItems, 
+            totalItems: cartTotalItems,
+            subTotalAmount: cartSubTotalAmount, 
+            taxAmount: cartTaxAmount, 
+            totalAmount: cartTotalAmount,
+          },
         };
       });
     },

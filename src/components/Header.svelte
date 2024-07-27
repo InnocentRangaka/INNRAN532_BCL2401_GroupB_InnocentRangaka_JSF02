@@ -2,18 +2,39 @@
     import { onMount } from 'svelte';
     import { fly } from 'svelte/transition';
     import { link } from 'svelte-spa-router';
+    import { appStore } from "../store/store";
+
+    const { subscribe, update } = appStore;
+
+    let app;
+    $: app = $appStore;
   
     let mobileMenuOpen = false;
     let categories = [];
+    $: categories = app.categories;
+    subscribe((state) => {
+      categories = state.categories;
+    });
+
     let wishListItems = 0;
-    let cart = { totalItems: 0 };
+    $: wishListItems = Object.values(app.wishList).length;
+    subscribe((state) => {
+      wishListItems = Object.values(state.wishList).length;
+    });
+
+    let cartTotalItems = 0;
+    $: cartTotalItems = app.cart.totalItems;
+    subscribe((state) => {
+      cartTotalItems = state.cart.totalItems;
+      console.log(state.cart)
+    });
   
     // Example data fetching
     onMount(() => {
       // Replace with actual data fetching logic
-      categories = ['electronics', 'clothing', 'home', 'sports'];
-      wishListItems = 3; // Example wishlist items count
-      cart.totalItems = 5; // Example cart items count
+      // categories = ['electronics', 'clothing', 'home', 'sports'];
+      // wishListItems = 3; // Example wishlist items count
+      // cart.totalItems = 5; // Example cart items count
     });
   
     const isAuthPages = (pageName) => {
@@ -21,7 +42,10 @@
       return authPages.includes(pageName);
     };
   
-    const menuName = (category) => `/${category}`;
+    const menuName = (category) => {
+      const cleanCategory = category ? category.toLowerCase() : category
+      return `${cleanCategory.replace("'s clothing", "")}`
+    };
     const capitalizeMenuName = (name) => name.charAt(0).toUpperCase() + name.slice(1);
 </script>
 
@@ -40,7 +64,7 @@
   
         <div class="hidden lg:flex items-center space-x-8">
           {#each categories as category}
-            <a href={menuName(category)} class="font-medium text-gray-700 md:hover:text-blue-700">{capitalizeMenuName(category)}</a>
+            <a href={'#/products/category/' + menuName(category)} class="font-medium text-gray-700 md:hover:text-blue-700">{capitalizeMenuName(menuName(category))}</a>
           {/each}
         </div>
   
@@ -75,9 +99,9 @@
                 <li>
                   <a href="/cart" use:link class="group hover:bg-gray-100 md:hover:bg-transparent">
                     <div class="hidden lg:block md:block relative">
-                      {#if cart.totalItems}
+                      {#if cartTotalItems}
                         <div class="t-0 absolute left-3 -top-4">
-                          <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">{cart.totalItems}</p>
+                          <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">{cartTotalItems}</p>
                         </div>
                       {/if}
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
@@ -122,9 +146,9 @@
             <li>
               <a href="/cart" use:link class="relative lg:hidden md:hidden py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                 Cart
-                {#if cart.totalItems}
+                {#if cartTotalItems}
                   <div class="t-0 absolute -right-5 top-2">
-                    <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-gray-700">{cart.totalItems}</p>
+                    <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-gray-700">{cartTotalItems}</p>
                   </div>
                 {/if}
               </a>

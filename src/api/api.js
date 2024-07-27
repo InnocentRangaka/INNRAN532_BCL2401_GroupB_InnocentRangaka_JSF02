@@ -42,4 +42,6 @@ export const initializeCategories = async (app) => {
     const response = await fetch(`${API_URL}products/categories`);
     const categories = await response.json();
     app.update((state) => ({ ...state, categories }));
+
+    console.log(categories)
 };

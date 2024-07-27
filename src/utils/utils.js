@@ -1,5 +1,5 @@
 
-const TAX_RATE = Number(0.15); // Number
+const TAX_RATE = Number(15); // Number
 const SHIPPING_COST_STANDARD = Number(5.00); // Number
 const SHIPPING_COST_EXPRESS = Number(16.00); // Number
 
@@ -9,13 +9,16 @@ function calculateCartTotalItems(cartItems) {
 }
 
 export const calculateSubTotalAmount = (items) => {
-    const total = items.reduce((amount, item) => amount + (item.price * item.quantity), 0);
+    let total = 0;
+    if(items){
+        total = Object.values(items).reduce((amount, item) => amount + (item.price * item.quantity), 0);
+    }
     return parseFloat(total).toFixed(2);
 };
 
 export const calculateCartTotal = (items) => {
     const subTotal = parseFloat(calculateSubTotalAmount(items));
-    const tax = subTotal * TAX_RATE;
+    const tax = (subTotal * TAX_RATE) / 100;
     const shipping = SHIPPING_COST_STANDARD;
     return (subTotal + tax + shipping).toFixed(2);
 };
@@ -25,14 +28,16 @@ function calculateAmount(item) {
 }
 
 function calculateTotalCartAmount(cart) {
-    const subTotal = parseFloat(calculateSubTotalAmount(cart.cartItems));
+    const subTotal = calculateSubTotalAmount(cart.cartItems);
     const shipping = parseFloat(cart.shippingRate);
     const tax = parseFloat(calculateTaxAmount(cart));
     return (subTotal + shipping + tax).toFixed(2);
 }
 
-export function calculateTaxAmount(cart) {
-    return (parseFloat(calculateSubTotalAmount(cart.cartItems)) * TAX_RATE).toFixed(2);
+export function calculateTaxAmount(items) {
+    const subTotal = calculateSubTotalAmount(items);
+    const tax = (subTotal * TAX_RATE) / 100;
+    return (tax).toFixed(2);
 }
 
 // Create a copy before modifying the cart to avoid side effects
@@ -61,14 +66,14 @@ export async function renderPage(name) {
         fetchedHTML = await fetchPage(pageName);
 
         if (!fetchedHTML) {
-        const checkCategoryPage = (await pageName) === name;
-        // pageName = checkCategoryPage ? "category" : name;
+            const checkCategoryPage = (await pageName) === name;
+            // pageName = checkCategoryPage ? "category" : name;
 
-        fetchedHTML = await fetchPage(pageName);
+            fetchedHTML = await fetchPage(pageName);
 
-        if (!fetchedHTML) {
-            fetchedHTML = await fetchPage("notfound");
-        }
+            if (!fetchedHTML) {
+                fetchedHTML = await fetchPage("notfound");
+            }
         }
 
         componentElement.innerHTML = fetchedHTML.innerHTML;
