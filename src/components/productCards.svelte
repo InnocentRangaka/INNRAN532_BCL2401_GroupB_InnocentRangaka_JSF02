@@ -3,6 +3,7 @@
     import { onMount, afterUpdate } from "svelte";
     import { link } from 'svelte-spa-router';
     import { appStore } from "../store/store";
+    import RatingStars from './RatingStars.svelte'
 
     let products = [];
     $: products = $appStore.products;
@@ -14,7 +15,7 @@
 
 </script>
   
-<div class="lg:max-h-[130rem] max-w-xl mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4 px-2 md:px-0">
+<div class="container lg:max-h-[130rem] mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4 px-2 md:px-0">
     {#each products as product (product.id)}
       <div class="flex flex-col max-h-[130rem] max-w-80 hover:-translate-y-1 hover:scale-105 duration-300 bg-white border border-slate-200 shadow shadow-slate-950/5 rounded-2xl overflow-hidden">
         <a 
@@ -46,7 +47,7 @@
             </header>
             {#if product.rating}
               <div class="flex items-left -ml-2 mb-2">
-                <!-- {@html app.ratingStars(product.rating.rate)} -->
+                 <RatingStars ratingNumber={product.rating.rate} />
               </div>
             {/if}
             <div class="text-base line-clamp-2 font-extrabold text-slate-500 leading-snug">
