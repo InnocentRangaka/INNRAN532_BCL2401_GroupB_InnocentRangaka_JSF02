@@ -144,5 +144,15 @@ export function uniqueObjects(array, key) {
       seen.add(value);
       return true;
     });
+}
+
+export function parseObjectToArray(object){
+  let parsedObject = {};
+  try {
+    parsedObject = {...JSON.parse(object)};
+  } catch (error) {
+    parsedObject = {...object};
   }
+  return parsedObject;
+}
   

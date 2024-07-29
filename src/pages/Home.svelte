@@ -35,10 +35,10 @@
       if(app.products.length < productsLength){
         if(getLocation.startsWith('#/') && getLocation.endsWith('#/')){
           appStore.update((state) => ({ ...state, filterItem: "All categories" }));
-        }
 
-        initializeCategories(appStore);
-        fetchProducts(appStore);
+          initializeCategories(appStore);
+          fetchProducts(appStore);
+        }
       }
     }
 

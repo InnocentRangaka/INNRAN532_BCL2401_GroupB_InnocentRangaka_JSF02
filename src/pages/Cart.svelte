@@ -3,12 +3,12 @@
     import { appStore } from "../store/store";
     import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage } from '../utils/utils'
 
-    const { subscribe, update, addToCart } = appStore;
+    const { subscribe, update, addToCart, isInCartItems } = appStore;
 
-    update((state) => ({ ...state, 
-        products: [], 
-        originalProducts: []
-    }));
+    // update((state) => ({ ...state, 
+    //     products: [], 
+    //     originalProducts: []
+    // }));
 
     let app;
     $: app = $appStore;
@@ -20,41 +20,97 @@
         cart = state.cart;
     });
 
-    let {isAddingToCart,
-      addToCartText,
-      shippingRate,
-      shippingMethod,
-      cartItems,
-      totalItems, 
-      subTotalAmount, 
-      taxAmount,
-      totalAmount} = $appStore.cart;
+    let {
+        isAddingToCart,
+        addToCartText,
+        shippingRate,
+        shippingMethod,
+        cartItems,
+        totalItems, 
+        subTotalAmount, 
+        taxAmount,
+        totalAmount
+    } = cart;
+
+    $: isAddingToCart = $appStore.cart.isAddingToCart
+    $: addToCartText = $appStore.cart.addToCartText
+    $: shippingRate = $appStore.cart.shippingRate
+    $: shippingMethod = $appStore.cart.shippingMethod
+    $: cartItems = $appStore.cart.cartItems
+    $: totalItems = $appStore.cart.totalItems 
+    $: subTotalAmount = $appStore.cart.subTotalAmount 
+    $: taxAmount = $appStore.cart.taxAmount
+    $: totalAmount = $appStore.cart.totalAmount
+
+    const initiateCart = (thisStore = appStore) => {
+        isAddingToCart = thisStore.cart.isAddingToCart
+        addToCartText = thisStore.cart.addToCartText
+        shippingRate = thisStore.cart.shippingRate
+        shippingMethod = thisStore.cart.shippingMethod
+        cartItems = thisStore.cart.cartItems
+        totalItems = thisStore.cart.totalItems 
+        subTotalAmount = thisStore.cart.subTotalAmount 
+        taxAmount = thisStore.cart.taxAmount
+        totalAmount = thisStore.cart.totalAmount
+    }
+    
+    subscribe((state) => {
+        initiateCart(state)
+    });
 
     $:  cartItems = $appStore.cart.cartItems
 
     onMount(async () => {
-        console.log(cartItems)
+        initiateCart(appStore)
+        console.log(cart)
     })
-  
-    function formatAmount(amount) {
-    //   return amount.toFixed(2);
-    }
-  
-    function calculateAmount(product) {
-      return product.price * product.quantity;
-    }
   
     function goBack() {
       window.history.back();
     }
-  
-    function updateQuantity(product, quantity) {
-      product.quantityUpdating = true;
-      // Update the product quantity here
-      setTimeout(() => {
-        product.quantity = quantity;
-        product.quantityUpdating = false;
-      }, 500);
+
+    let selectElement;
+
+    function updateQuantity(thisElement, item, el){
+        const quantity = thisElement.value
+        console.log(quantity, isInCartItems(item.id, cartItems), el)
+        // if(thisElement.hasAttribute('disabled')){return;}
+
+        // Alpine.store('app').cart.disableElement(el);
+
+        const findItemInCart = isInCartItems(item.id, cartItems);
+        const itemsObject = Object.values(cartItems);
+
+        if(findItemInCart){
+            const index = itemsObject.indexOf(findItemInCart);
+            setTimeout(() => {
+                appStore.update((state) => {
+                    const newCartItems = { ...state.cart.cartItems };
+                    if(newCartItems[index]){
+                        newCartItems[index].quantity = quantity;    
+                        newCartItems[index].totalPrice = quantity * newCartItems[index].price;
+                    }
+
+                    const cartTotalItems = newCartItems ? Object.values(newCartItems).length : 0;
+                    const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
+                    const cartTaxAmount = calculateTaxAmount(newCartItems);
+                    const cartTotalAmount = calculateCartTotal(newCartItems);
+
+                    return {
+                        ...state,
+                        cart: { ...state.cart, 
+                            cartItems: newCartItems, 
+                            totalItems: cartTotalItems,
+                            subTotalAmount: cartSubTotalAmount, 
+                            taxAmount: cartTaxAmount, 
+                            totalAmount: cartTotalAmount,
+                        },
+                    };
+                });
+            }, 2000);
+          
+          return;
+        }
     }
   
     function removeItem(product) {
@@ -64,6 +120,14 @@
         cartItems = cartItems.filter(item => item.id !== product.id);
         totalItems -= 1;
       }, 500);
+    }
+
+    $: {
+      tick().then(async () => {
+        initiateCart()
+        cart
+        console.log('cartTick', cart.totalAmount)
+      });
     }
   </script>
   
@@ -85,11 +149,13 @@
   </div>
   
   <!-- Container for the Shopping Cart Items and Order Summary -->
+   {#if totalItems > 0}
   <div class="container mx-auto mb-4">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 sm:gap-x-10 sm:gap-y-6 relative">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-3 sm:gap-x-10 sm:gap-y-6 relative">
       <!-- Items List -->
       <div class="col-span-2 relative bg-white p-8 rounded-lg shadow-md">
         {#each Object.values(cartItems) as product (product.id)}
+        <!-- {#key p} -->
           <div class="border-b pb-4 mb-4">
             <div class="flex justify-between items-center">
               <div class="flex items-center w-full relative gap-4 sm:gap-10">
@@ -124,14 +190,16 @@
                             <div>Updating...</div>
                           {/if}
                           {#if !product.quantityUpdating}
-                            <input type="number" min="1" class="border p-1" bind:value={product.quantity} on:change={() => updateQuantity(product, product.quantity)}>
-                            <select class="border rounded-lg p-2"
-                                on:change={() => updateQuantity($event, product)}
-                            >
-                                {#each Array(10).fill(0).map((_, i) => i + 0) as i}
-                                    <option value="{i + 1}">{i + 1}</option>
-                                {/each}
-                            </select>
+                            <div>
+                                <select class="border rounded-lg p-2"
+                                    on:change={(event) => updateQuantity(event.target, product)}
+                                    bind:value={product.quantity}
+                                >
+                                    {#each Array(10).fill(0).map((_, i) => i + 0) as i}
+                                        <option value="{i + 1}">{i + 1}</option>
+                                    {/each}
+                                </select>
+                            </div>
                           {/if}
                         </div>
                         <div class="inline-flex items-end place-content-center text-xs">
@@ -139,7 +207,9 @@
                             <div>Removing item...</div>
                           {/if}
                           {#if !product.removeItem}
-                            <button class="text-red-500 hover:text-red-700" on:click={() => removeItem(product)}>Remove</button>
+                            <button class="text-red-500 hover:text-red-700" on:click={() => removeItem(product)}>
+                                
+                            </button>
                           {/if}
                         </div>
                       </div>
@@ -149,6 +219,7 @@
               </div>
             </div>
           </div>
+          <!-- {/key} -->
         {/each}
   
         {#if cartItems.length === 0}
@@ -187,4 +258,19 @@
       </div>
     </div>
   </div>
-  
+  {:else}
+  <div class="container min-h-full text-center mx-auto pt-20">
+    <div class="w-full min-h-full text-center">
+        <h1 class="mt-4 text-3xl font-bold tracking-tight text-gray-900 sm:text-5xl">No item found</h1>
+        <p class="mt-6 text-base leading-7 text-gray-600">Sorry, we couldn’t find any item in your cart.</p>
+        <div class="mt-10 flex items-center justify-center gap-4">
+            
+            <a href="/" class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600">
+                <span class="mb-[0.12rem] font-semibold">
+                    Continue shopping
+                </span>
+            </a>
+        </div>
+    </div>
+</div>
+  {/if}

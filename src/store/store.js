@@ -1,7 +1,7 @@
 import { writable, derived, get } from 'svelte/store';
 import { location, params, querystring } from 'svelte-spa-router'
 import { fetchProducts, fetchSingleProduct, initializeCategories } from '../api/api';
-import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage } from '../utils/utils'
+import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage, parseObjectToArray } from '../utils/utils'
 
 function createAppStore() {
   const { subscribe, set, update } = writable({
@@ -81,14 +81,21 @@ function createAppStore() {
       const favourites = await response.json();
       update((state) => ({ ...state, wishList: favourites }));
     },
-    addToCart: (product, eventTarget = null) => {
+    addToCart: (item, eventTarget = null) => {
       update((state) => {
         const newCartItems = { ...state.cart.cartItems };
-        if (newCartItems[product.id]) {
-          newCartItems[product.id].quantity += 1;
-          newCartItems[product.id].totalPrice = newCartItems[product.id].quantity * product.price;
+        if (newCartItems[item.id]) {
+          newCartItems[item.id].quantity += 1;
+          newCartItems[item.id].totalPrice = newCartItems[item.id].quantity * item.price;
         } else {
-          newCartItems[product.id] = { ...product, quantity: 1, totalPrice: product.price };
+          const hasQuantity = item.quantity ? item.quantity : 1;
+          newCartItems[item.id] = { 
+            ...item, 
+            quantity: hasQuantity, 
+            totalPrice: item.price,
+            quantityUpdating: false,
+            removeItem: false,
+          };
         }
         const cartTotalItems = newCartItems ? Object.values(newCartItems).length : 0;
         const cartSubTotalAmount = calculateSubTotalAmount(newCartItems);
@@ -129,6 +136,10 @@ function createAppStore() {
           },
         };
       });
+    },
+    isInCartItems(id, object) {
+      const parsedObject = parseObjectToArray(object);
+      return Object.values(parsedObject).find(item => item.id === id) || false;
     },
     addToFavourites: (id) => {
       update((state) => {
