@@ -1,4 +1,6 @@
 <script>
+  import StoreLogo from '../../assets/online-shop.png'
+
     let email = '';
     let password = '';
   
@@ -16,25 +18,25 @@
   
   <div class="container flex items-center mx-auto px-4 py-4 min-h-[44px] ">
     <div class="mb-2 text-xs text-left flex items-start mr-auto">
-      <a on:click={goBack} class="cursor-pointer hover:text-cyan-900 hover:underline">
+      <button on:click={goBack} class="cursor-pointer hover:text-cyan-900 hover:underline">
         <span class="flex h-full items-center text-xs text-left ">
           <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
             <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/>
           </svg>
           <span class="mb-[0.1rem]">Back</span>
         </span>
-      </a>
+      </button>
     </div>
   </div>
   
-  <div class="container mx-auto bg-white p-8 rounded-lg shadow-md min-h-[600px] h-full max-h-screen w-full items-center justify-center m-auto flex flex-col">
+  <div class="container mx-a min-h-[600px] h-full max-h-screen w-full items-center justify-center m-auto flex flex-col">
     <div class="flex min-h-full w-full flex-1 flex-col justify-center px-6 py-12 lg:px-8 m-auto">
       <div class="sm:mx-auto sm:w-full sm:max-w-sm">
-        <img class="mx-auto h-10 w-auto" src="/online-shop.png" alt="SwiftCart Logo">
+        <img class="mx-auto h-10 w-auto" src={StoreLogo} alt="SwiftCart Logo">
         <h2 class="mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">Sign in to your account</h2>
       </div>
       
-      <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
+      <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm bg-white p-8 rounded-lg shadow-md">
         <form on:submit={handleSubmit} class="space-y-6">
           <div>
             <label for="email" class="block text-sm font-medium leading-6 text-gray-900">Email address</label>
@@ -73,12 +75,12 @@
   
         <div class="flex items-center justify-between mt-10">
           <div class="block text-sm">
-            <a href="/auth/forgot_password" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
+            <a href="/#/auth/forgot_password" class="font-semibold text-indigo-600 hover:text-indigo-500">Forgot password?</a>
           </div>
   
           <p class="block text-center text-sm text-gray-700 leading-6">
             Not a member?
-            <a href="/auth/signup" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign up</a>
+            <a href="/#/auth/signup" class="font-semibold leading-6 text-indigo-600 hover:text-indigo-500">Sign up</a>
           </p>
         </div>
   

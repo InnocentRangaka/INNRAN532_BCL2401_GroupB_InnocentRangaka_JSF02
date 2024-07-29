@@ -4,6 +4,7 @@
     import ProductCards from '../components/ProductCards.svelte';
     import ProductCardSkeleton from '../components/ProductCardSkeleton.svelte';
     import { initializeCategories } from '../api/api'
+    import NotFound from './NotFound.svelte';
 
     const { subscribe, update, fetchProducts } = appStore;
 
@@ -12,7 +13,8 @@
 
     let getLocation,
       categoryParams,
-      categoryPath;
+      categoryPath,
+      showHomePage;
 
     $: categoryParams = app.currentLocation?.params?.category; 
     $: categoryPath = app.currentLocation.path.replace('/products/category/', '');
@@ -31,13 +33,18 @@
       initializeProducts(thisType, thisApp);
 
       if(app.products.length < productsLength){
-        if(!getLocation || getLocation.startsWith('#/') && getLocation.endsWith('#/')){
+        if(getLocation.startsWith('#/') && getLocation.endsWith('#/')){
           appStore.update((state) => ({ ...state, filterItem: "All categories" }));
         }
 
         initializeCategories(appStore);
         fetchProducts(appStore);
       }
+    }
+
+    const isHomePageShown = () =>{
+      // console.log($appStore.currentLocation)
+      // showHomePage = $appStore.pages.productPages.find(name => name == $appStore.pageName)
     }
 
     onMount(async () => {
@@ -50,26 +57,30 @@
     $: {
       tick().then(() => {
         products;
+        // isHomePageShown();
       });
     }
     
 </script>
 
-
-<div class="grid justify-center">
-      {#if app.loading.products}
-        <div
-          class={
-            "container mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none "
-            + (app.loading.page ? " my-4" : " my-0")
-          }
-        >
-          {#each Array(20) as i}
-            <ProductCardSkeleton />
-          {/each}
-        </div>
-      {/if}
-      {#if !app.loading.products && !app.error}
-        <ProductCards />
-      {/if}
-</div>
+<!-- {#if showHomePage} -->
+  <div class="grid justify-center">
+    {#if app.loading.products}
+      <div
+        class={
+          "container mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none "
+          + (app.loading.page ? " my-4" : " my-0")
+        }
+      >
+        {#each Array(20) as i}
+          <ProductCardSkeleton />
+        {/each}
+      </div>
+    {/if}
+    {#if !app.loading.products && !app.error}
+      <ProductCards />
+    {/if}
+  </div>
+<!-- {:else}
+  <NotFound />
+{/if} -->

@@ -106,20 +106,24 @@
 
 </script>
 
-<div class="grid justify-center">
-    {#if app.loading.products}
-        <div
-            class={
-                "container mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none "
-                + (app.loading.page ? " my-4" : " my-0")
-            }
-        >
-            {#each Array(wishListItems) as i}
-                <ProductCardSkeleton />
-            {/each}
-        </div>
-    {/if}
-    {#if !app.loading.products && !app.error}
-        <ProductCards />
-    {/if}
-</div>
+{#if wishListIds > 0}
+    <div class="grid justify-center">
+        {#if app.loading.products}
+            <div
+                class={
+                    "container mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none "
+                    + (app.loading.page ? " my-4" : " my-0")
+                }
+            >
+                {#each Array(wishListItems) as i}
+                    <ProductCardSkeleton />
+                {/each}
+            </div>
+        {/if}
+        {#if !app.loading.products && !app.error}
+            <ProductCards />
+        {/if}
+    </div>
+{:else}
+    <p>No Products</p>
+{/if}
