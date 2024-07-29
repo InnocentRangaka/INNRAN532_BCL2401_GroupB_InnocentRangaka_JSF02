@@ -60,7 +60,7 @@ function createAppStore() {
     // Page navigation
     pageName: null,
     pages: {
-      productPages: ['home', 'wishlist'],
+      productPages: ['home', 'wishlist', 'products', 'product'],
       authPages: ['login', 'signup'],
       cartPages: ['cart', 'checkout'],
     },

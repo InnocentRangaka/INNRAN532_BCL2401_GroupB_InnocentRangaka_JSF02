@@ -1,5 +1,5 @@
 <script>
-  import { onMount, afterUpdate } from "svelte";
+  import { onMount, tick } from "svelte";
   import { appStore } from "../store/store";
   import SearchFilterSort from "./SearchFilterSort.svelte"
   // import { navigate } from './router.js';
@@ -7,13 +7,41 @@
 
   import Header from "./Header.svelte";
 
-  let app;
+  const { subscribe, update, fetchProducts } = appStore;
+
+  let app, productPages, currentLocation, currentPage, showTopPart;
   $: app = $appStore;
   let { loading } = $appStore;
 
+  $: productPages = $appStore.pages.productPages
+  $: currentLocation = $appStore.currentLocation;
+  subscribe((state) => { currentLocation = state.currentLocation });
+
+  $: currentPage = $appStore.pageName;
+  subscribe((state) => {
+    currentPage = state.pageName
+    });
+
+  const isTopPartShown = () =>{
+    showTopPart = $appStore.pages.productPages.find(name => name == $appStore.pageName)
+  }
+  
+    onMount(async () => {
+        isTopPartShown();
+    })
+
+$: {
+    tick().then(() => {
+        isTopPartShown();
+        currentPage;
+    });
+}
+
 </script>
 
-<Header />
+{#if showTopPart}
+    <Header />
+{/if}
 
 <main>
     <!-- <div class="min-h-screen flex justify-center items-center">
@@ -23,7 +51,10 @@
     </div> -->
 
     <div class="page-content">
-        <SearchFilterSort />
+        {#if showTopPart}
+            <SearchFilterSort />
+        {/if}
+
         <h1>{app.pageName}</h1>
         <slot></slot>
     </div>

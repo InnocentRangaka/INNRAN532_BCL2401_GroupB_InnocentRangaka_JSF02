@@ -20,5 +20,8 @@ export default {
     '/wishlist': wrap({
         asyncComponent: () => import('../pages/Wishlist.svelte'),
     }),
+    '/auth/login': wrap({
+        asyncComponent: () => import('../pages/auth/Login.svelte'),
+    }),
     '*': NotFound,
 };
