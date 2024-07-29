@@ -42,6 +42,57 @@ export const initializeCategories = async (app) => {
     const response = await fetch(`${API_URL}products/categories`);
     const categories = await response.json();
     app.update((state) => ({ ...state, categories }));
-
-    console.log(categories)
 };
+
+export const fetchFavourites = async (objectArray, app) => {
+
+    try {
+      const getIds = [...new Set(Object.values(objectArray))];
+      const list = [];
+      for (const id of getIds) {
+        const response = await fetch(`${API_URL}products/${id}`);
+        const fetchedData = await response.json();
+  
+        if (fetchedData.error) {
+          throw fetchedData.error;
+        }
+  
+        if (!fetchedData.response) {
+          return;
+        }
+
+        console.log('fetchedData', fetchedData.response)
+  
+        list.push(fetchedData.response);
+      }
+  
+      if (list.length > 0) {
+        app.update((state) => ({ ...state, 
+            products: list, 
+            originalProducts: JSON.parse(JSON.stringify(list))
+         }));
+        // app.loading.products = false;
+        console.log(list)
+      }
+    } catch (error) {
+      app.error = {
+        status: error.status,
+        message: 'Data fetching failed :( , please check your network connection and reload.',
+        type: 'network/fetch',
+      };
+    } finally {
+        app.sortProducts();
+        app.searchProducts();
+        app.update((state) => ({
+            ...state,
+            loading: { ...state.loading, products: false },
+        }));
+
+        setTimeout(() => {
+            app.update((state) => ({
+                ...state,
+                loading: { ...state.loading, page: false },
+            }));
+        }, 1000);
+    }
+  };

@@ -4,12 +4,15 @@
     import { link } from 'svelte-spa-router';
     import { appStore } from "../store/store";
 
-    const { subscribe, update } = appStore;
+    const { subscribe, update, initializeCategories } = appStore;
 
     let app;
     $: app = $appStore;
+    
+    initializeCategories(appStore)
   
     let mobileMenuOpen = false;
+
     let categories = [];
     $: categories = app.categories;
     subscribe((state) => {
@@ -26,15 +29,12 @@
     $: cartTotalItems = app.cart.totalItems;
     subscribe((state) => {
       cartTotalItems = state.cart.totalItems;
-      console.log(state.cart)
     });
   
     // Example data fetching
     onMount(() => {
-      // Replace with actual data fetching logic
-      // categories = ['electronics', 'clothing', 'home', 'sports'];
-      // wishListItems = 3; // Example wishlist items count
-      // cart.totalItems = 5; // Example cart items count
+      // console.log(categories)
+      // console.log($appStore.categories)
     });
   
     const isAuthPages = (pageName) => {
@@ -87,13 +87,31 @@
             <div class="hidden md:block md:w-auto" id="navbar-dropdown">
               <ul class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
                 <li>
-                  <a href="/wishlist" use:link class="block py-2 px-3 relative text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
-                    Wishlist
-                    {#if wishListItems}
-                      <div class="t-0 absolute -right-4 -top-4">
-                        <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">{wishListItems}</p>
-                      </div>
-                    {/if}
+                  <a href="/wishlist" use:link class="group hover:bg-gray-100 md:hover:bg-transparent">
+                    <div class="hidden lg:block md:block relative">
+                      {#if wishListItems}
+                        <div class="t-0 absolute left-3 -top-4">
+                          <p class="flex h-2 w-2 items-center justify-center rounded-full bg-red-500 p-3 text-xs text-white">{wishListItems}</p>
+                        </div>
+                      {/if}
+                      <svg
+                        class="h-6 w-6 stroke-gray-500 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
+                        aria-hidden="true"
+                        xmlns="http://www.w3.org/2000/svg"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke-width="1.5"
+                        stroke="currentColor"
+                      >
+                        <path
+                          stroke="currentColor"
+                          stroke-linecap="round"
+                          stroke-linejoin="round"
+                          stroke-width="2"
+                          d="M12.01 6.001C6.5 1 1 8 5.782 13.001L12.011 20l6.23-7C23 8 17.5 1 12.01 6.002Z"
+                        />
+                      </svg>
+                    </div>
                   </a>
                 </li>
                 <li>

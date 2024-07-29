@@ -74,9 +74,7 @@
   
     const capitalizeFirstLetters = (str) => {
       return str ? str.replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null;;
-    };
-
-    console.log($appStore.currentLocation)
+    }
     
   </script>
 

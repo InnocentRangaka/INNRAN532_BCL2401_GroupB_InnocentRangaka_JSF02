@@ -189,6 +189,41 @@ function createAppStore() {
       
       // console.log('p2',urlpath, locationPath)
     },
+
+    sortProducts: () => {
+      update((state) => {
+        let stateProducts,
+        sorting = {...state.sorting},
+        sortedProducts;
+
+        if (sorting !== 'default') {
+          stateProducts = {...state.products}
+          sortedProducts = Object.values(stateProducts).sort((a, b) => sorting === 'low' ? a.price - b.price : b.price - a.price);
+        } else {
+          stateProducts = {...state.originalProducts}
+          sortedProducts = JSON.parse(JSON.stringify(stateProducts));
+        }
+        return { ...state, products: sortedProducts }
+      });
+    },
+
+    searchProducts: () => {
+      update((state) => { 
+        let searchedProducts,
+        searchTerm = {...state.searchTerm},
+        stateProducts = {...state.originalProducts};
+
+        console.log('stateProducts', stateProducts)
+
+        if(searchTerm.toString().trim() !== '') {
+          const filteredProducts = Object.values(stateProducts).filter((product) => product.title.includes(searchTerm.toString().toLowerCase()));
+          searchedProducts = JSON.parse(JSON.stringify(filteredProducts));
+        } else {
+          searchedProducts = JSON.parse(JSON.stringify(stateProducts));
+        }
+        return {...state, products: searchedProducts }
+      });
+    }
   };
 }
 

@@ -128,3 +128,21 @@ export function getUrlMainPage () {
 
     return newName ? newName : currentPath;
 }
+
+export const createUniqueArray = (array) => {
+    // Filter out empty values
+    return Object.values(array).filter((item, index, self) => self.indexOf(item) === index); // Remove duplicates
+}
+
+export function uniqueObjects(array, key) {
+    const seen = new Set();
+    return array.filter(item => {
+      const value = item[key];
+      if (seen.has(value)) {
+        return false;
+      }
+      seen.add(value);
+      return true;
+    });
+  }
+  
