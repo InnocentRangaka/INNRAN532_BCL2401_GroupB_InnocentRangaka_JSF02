@@ -213,7 +213,7 @@ function createAppStore() {
         searchTerm = {...state.searchTerm},
         stateProducts = {...state.originalProducts};
 
-        console.log('stateProducts', stateProducts)
+        // console.log('stateProducts', stateProducts)
 
         if(searchTerm.toString().trim() !== '') {
           const filteredProducts = Object.values(stateProducts).filter((product) => product.title.includes(searchTerm.toString().toLowerCase()));

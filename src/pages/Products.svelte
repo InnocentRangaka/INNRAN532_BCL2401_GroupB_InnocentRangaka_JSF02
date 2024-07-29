@@ -1,5 +1,5 @@
 <script>
-    import { onMount, tick, beforeUpdate, afterUpdate } from 'svelte';
+    import { onMount, tick } from 'svelte';
     import { get } from 'svelte/store';
     import { appStore } from "../store/store";
     import ProductCards from '../components/ProductCards.svelte';
@@ -20,7 +20,7 @@
       categoryPath;
 
     $: categoryParams = app.currentLocation?.params?.category; 
-    $: categoryPath = app.currentLocation.path.replace('/products/category/');
+    $: categoryPath = app.currentLocation.path.replace('/products/category/', '');
     $: getLocation = window.location.href.replace(window.location.origin, '');
 
     let findCategory = "All categories";
