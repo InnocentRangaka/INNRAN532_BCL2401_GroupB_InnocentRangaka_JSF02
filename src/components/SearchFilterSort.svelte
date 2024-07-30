@@ -1,8 +1,20 @@
-<script> // Adjust the path as necessary
+<script>
+  import { onMount, tick } from "svelte";
     import { get } from 'svelte/store';
     import { appStore } from '../store/store';
   
     const { subscribe, update, fetchProducts, setSorting } = appStore;
+
+    let app, currentLocation;
+    $: app = $appStore;
+
+    $: currentLocation = $appStore.currentLocation;
+    subscribe((state) => { currentLocation = state.currentLocation });
+
+    $: currentQuery = $appStore.currentLocation.query;
+    subscribe((state) => {
+      currentQuery = state.currentLocation.query
+    });
   
     let searchTerm;
     subscribe((state) => {
@@ -34,14 +46,19 @@
       update((state) => ({ ...state, dropdownOpen: !dropdownOpen }));
     };
   
-    const setFilterItem = (item) => {
+    const setFilterItem = (item, clicked=true) => {
       update((state) => ({ ...state, dropdownOpen: false }))
+
       update((state) => ({ ...state, filterItem: item }));
+      
+      if(clicked){
+        updateURL(appStore);
+      }
 
       fetchProducts(appStore);
     };
   
-    const searchProducts = (term) => {
+    const searchProducts = (term, clicked=true) => {
       update((state) => ({ ...state, searchTerm: term }));
       let searchedProducts,
       stateProducts = get(appStore).originalProducts;
@@ -52,11 +69,15 @@
       } else {
         searchedProducts = JSON.parse(JSON.stringify(stateProducts));
       }
+      
+      if(clicked){
+        updateURL(appStore);
+      }
 
-        update((state) => ({ ...state, products: searchedProducts }));
+      update((state) => ({ ...state, products: searchedProducts }));
     };
   
-    const sortProducts = (sort) => {
+    const sortProducts = (sort, clicked=true) => {
       update((state) => ({ ...state, sorting: sort }));
       let stateProducts,
       sortedProducts;
@@ -68,14 +89,119 @@
         stateProducts = get(appStore).originalProducts
         sortedProducts = JSON.parse(JSON.stringify(stateProducts));
       }
+      
+      if(clicked){
+        updateURL(appStore);
+      }
 
       update((state) => ({ ...state, products: sortedProducts }));
     };
   
     const capitalizeFirstLetters = (str) => {
-      return str ? str.replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null;;
+      return str ? str.replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null;
     }
-    
+
+    const handleSearchParams = () => {
+      let params = new URLSearchParams(window.location.search),
+        query = new URLSearchParams(window.location.query);
+
+      let filter = '';
+      let sort = '';
+      let search = '';
+
+      if(params.size > 0){
+        filter = params.get('filter') || '';
+        sort = params.get('sort') || '';
+        search = params.get('search') || '';
+
+      }
+
+      if(params.size === 0 && query.size > 0){
+        filter = query.get('filter') || '';
+        sort = query.get('sort') || '';
+        search = query.get('search') || '';
+      }
+      
+      if(params.size === 0 && query.size === 0 && currentQuery) {
+        query = new URLSearchParams(currentQuery);
+
+        filter = query.get('filter') || '';
+        sort = query.get('sort') || '';
+        search = query.get('search') || '';
+      }
+
+      if(params.size === 0 && query.size === 0 && !currentQuery){
+        if(window.location.hash.startsWith('#/?')){
+          const queryString = window.location.hash.repeat('#/?')
+          let hash = new URLSearchParams(window.location.hash);
+
+          filter = hash.get('#/?filter') || hash.get('filter') || '';
+          sort = hash.get('#/?sort') || hash.get('sort') || '';
+          search = hash.get('#/?search') || hash.get('search') || '';
+        }
+      }
+
+      if(search && search !== 'undefined'){
+        searchProducts(search, false)
+      }
+
+      if(filter && filter !== 'undefined'){
+        setFilterItem(filter, false)
+      }
+
+      if(sort && sort !== 'undefined'){
+        sortProducts(sort, false)
+      }
+    }
+
+    function updateURL(thisStore) {
+      const url = new URLSearchParams(window.location),
+        pathName =  new URLSearchParams(window.location.pathname),
+        params = new URLSearchParams(window.location.search);
+
+        let sorting = get(thisStore).sorting,
+          filtering = get(thisStore).filterItem,
+          searching = get(thisStore).searchTerm,
+          path = window.location.pathname.startsWith('/#/') ? '' : `${window.location.pathname}/#/`;
+
+          let isDeleting = false;
+
+        if (filtering !== 'All categories') {
+            params.set('filter', filtering);
+        } else {
+            params.delete('filter');
+            isDeleting = true;
+        }
+        if (sorting && sorting !== 'default') {
+            params.set('sort', sorting);
+            isDeleting = true;
+        } else {
+            params.delete('sort');
+            isDeleting = true;
+        }
+
+        if(isDeleting){
+          if(params.size == 0){
+            pathName.delete('?')
+            window.history.replaceState({}, '', `${path.replace('//#/', '/#/').replace('?', '')}`);
+            console.log('d')
+          }
+          else {
+            window.history.replaceState({}, '', `${path.replace('//#/', '/#/')}?${params}`);
+          }
+        }
+        else {
+            window.history.replaceState({}, '', `${path.replace('//#/', '/#/')}?${params}`);
+          console.log('p2')
+        } 
+
+        return {sort: sorting, filter: filtering, search: searching}
+    }
+
+    onMount(async () => {
+        handleSearchParams();
+    })
+
   </script>
 
   <div class="container grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center">

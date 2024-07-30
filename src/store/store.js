@@ -171,34 +171,7 @@ function createAppStore() {
       }));
     },
     getLocation: () => {
-      // let locationPath;
-      // let windowLocationPath;
-      
-      // let urlpath;
-      // $: urlpath = get(appStore).currentLocation 
-      
-      // subscribe((state) => {
-      //   windowLocationPath = window.location.href.replace(window.location.origin, '');
-      //   locationPath = get(location);
-
-      //   state.currentLocationPath = windowLocationPath
-
-      //   console.log('p', locationPath, windowLocationPath)
-      //   return { ...state, currentLocationPath: locationPath }
-      // });
-
-      // update((state) => ({ ...state, currentLocationPath: get(location) }))
-      // subscribe((state) => {
-      //   urlpath = state.currentLocation ;
-      // });
-
-      // if(locationPath !== urlpath){
-      //   urlpath = locationPath
-      //   console.log('p1',urlpath)
-      //   update((state) => ({ ...state, currentLocation: locationPath }))
-      // }
-      
-      // console.log('p2',urlpath, locationPath)
+      return get(appStore).currentLocation;
     },
 
     sortProducts: () => {
