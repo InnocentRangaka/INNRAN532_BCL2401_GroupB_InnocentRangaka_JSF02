@@ -162,7 +162,7 @@
     <div class="container grid grid-cols-1 sm:grid-cols-2 items-center mx-auto px-4 py-4 min-h-[44px]">
       <h1 class="text-gray-800 text-xl font-bold my-2">Shopping Cart ({totalItems})</h1>
       <div class="mb-2 text-xs text-right flex items-end ml-auto">
-        <a href="/" class="cursor-pointer hover:text-cyan-900 hover:underline">
+        <a href="/#/" class="cursor-pointer hover:text-cyan-900 hover:underline">
           <span class="flex h-full items-center text-xs text-right">
             <svg xmlns="http://www.w3.org/2000/svg" height="20px" viewBox="0 -960 960 960" width="20px" fill="currentColor">
               <path d="M560-240 320-480l240-240 56 56-184 184 184 184-56 56Z"/>
@@ -281,7 +281,7 @@
             <p class="mt-6 text-base leading-7 text-gray-600">Sorry, we couldn’t find any item in your cart.</p>
             <div class="mt-10 flex items-center justify-center gap-4">
                 
-                <a href="/" class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600">
+                <a href="/#/" class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600">
                     <span class="mb-[0.12rem] font-semibold">
                         Continue shopping
                     </span>

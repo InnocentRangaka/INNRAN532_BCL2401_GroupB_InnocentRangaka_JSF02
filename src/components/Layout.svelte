@@ -2,14 +2,13 @@
   import { onMount, tick } from "svelte";
   import { appStore } from "../store/store";
   import SearchFilterSort from "./SearchFilterSort.svelte"
-  // import { navigate } from './router.js';
-  // import { pageLoading, loading, pageName } from '../store/store.js';
+  import Footer from './Footer.svelte';
 
   import Header from "./Header.svelte";
 
   const { subscribe, update, fetchProducts } = appStore;
 
-  let app, productPages, currentLocation, currentPage, showTopPart;
+  let app, productPages, currentLocation, currentPage, showTopPart, error;
   $: app = $appStore;
   let { loading } = $appStore;
 
@@ -18,9 +17,10 @@
   subscribe((state) => { currentLocation = state.currentLocation });
 
   $: currentPage = $appStore.pageName;
-  subscribe((state) => {
-    currentPage = state.pageName
-    });
+  subscribe((state) => { currentPage = state.pageName });
+
+  $: currentError = $appStore.error;
+  subscribe((state) => { currentError = state.error });
 
   const isTopPartShown = () =>{
     // showTopPart = $appStore.pages.productPages.find(name => name == $appStore.pageName)
@@ -49,22 +49,26 @@
 <!-- {/if} -->
 
 <main>
-    <!-- <div class="min-h-screen flex justify-center items-center">
-        <div
-        class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"
-        ></div>
-    </div> -->
 
     <div class="page-content">
         <!-- {#if showTopPart} -->
             <SearchFilterSort />
         <!-- {/if} -->
+
+        <!-- Error -->
+        {#if currentError}
+            <div class="w-full flex justify-center">
+                <p class="mt-28 text-red-500 text-xl font-bold">
+                    {currentError.message}
+                </p>
+            </div>
+        {/if}
+
+        <!-- Content -->
         <slot></slot>
     </div>
 
-    <!-- <div class="min-h-screen flex justify-center items-center">
-        <div
-        class="animate-spin rounded-full h-32 w-32 border-t-2 border-b-2 border-gray-900"
-        ></div>
-    </div> -->
 </main>
+
+<!-- Footer -->
+<Footer />

@@ -31,7 +31,6 @@
       cartTotalItems = state.cart.totalItems;
     });
   
-    // Example data fetching
     onMount(() => {
       // console.log(categories)
       // console.log($appStore.categories)
@@ -53,7 +52,7 @@
     <nav class="bg-white border-gray-200">
       <div class="container flex flex-wrap items-center justify-between mx-auto p-4">
         <!-- SwiftCart Logo -->
-        <a href="/">
+        <a href="/#/">
           <button class="flex items-center space-x-3 rtl:space-x-reverse">
             <img src="/src/assets/online-shop.png" class="h-8" alt="SwiftCart Logo" />
             <span class="self-center text-2xl font-semibold whitespace-nowrap text-gray-700 md:hover:text-blue-700">

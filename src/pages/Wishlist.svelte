@@ -131,7 +131,7 @@
             <p class="mt-6 text-base leading-7 text-gray-600">Sorry, we couldn’t find any item in your wishlist.</p>
             <div class="mt-10 flex items-center justify-center gap-4">
                 
-                <a href="/" class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600">
+                <a href="/#/" class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600">
                     <span class="mb-[0.12rem] font-semibold">
                         Continue shopping
                     </span>

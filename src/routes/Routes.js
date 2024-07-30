@@ -8,11 +8,11 @@ export default {
     '/': Home,
     '/product/:id': wrap({
         asyncComponent: () => import('../pages/ProductDetailView.svelte'),
-        props: (params) => ({ id: params.id }),
+        // props: (params) => ({ id: params.id }),
     }),
     '/products/category/:category': wrap({
         asyncComponent: () => import('../pages/Products.svelte'),
-        props: (params) => ({ category: params.category }),
+        // props: (params) => ({ category: params.category }),
     }),
     '/cart': wrap({
         asyncComponent: () => import('../pages/Cart.svelte'),

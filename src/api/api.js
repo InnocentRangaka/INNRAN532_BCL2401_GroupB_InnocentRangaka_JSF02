@@ -19,11 +19,29 @@ export const fetchProducts = async (app) => {
     if (stateFilterItem !== 'All categories') {
         app.update((state) => ({ ...state, loading: { ...state.loading, products: true } }));
         const response = await fetch(`${API_URL}products/category/${stateFilterItem}`);
+        if(!response.ok){
+          app.update((state) => ({ ...state, error: { ...state.error, 
+            status: response.status,
+            message: 'Data fetching failed :( , please check your network connection and reload.',
+            type: 'network/fetch', 
+            }
+          }));
+        }
         foundProducts = await response.json();
     }
     else{
         app.update((state) => ({ ...state, loading: { ...state.loading, products: true } }));
         const response = await fetch(`${API_URL}products`);
+        if(!response.ok){
+          if(!response.ok){
+            app.update((state) => ({ ...state, error: { ...state.error, 
+              status: response.status,
+              message: 'Data fetching failed :( , please check your network connection and reload.',
+              type: 'network/fetch', 
+              }
+            }));
+          }
+        }
         foundProducts = await response.json();
     }
 
