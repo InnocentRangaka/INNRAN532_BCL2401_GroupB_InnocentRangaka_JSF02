@@ -1,20 +1,28 @@
 <script>
-  import StoreLogo from '../../assets/online-shop.png'
+  import StoreLogo from '../../assets/online-shop.png';
 
-    let email = '';
-    let password = '';
-  
-    function goBack() {
-      window.history.back();
-    }
-  
-    function handleSubmit(event) {
-      event.preventDefault();
-      // Handle login logic here
-      console.log('Email:', email);
-      console.log('Password:', password);
-    }
-  </script>
+  let email = '';
+  let password = '';
+
+  /**
+   * Navigates back to the previous page.
+   */
+  function goBack() {
+    window.history.back();
+  }
+
+  /**
+   * Handles the form submission for login.
+   * @param {Event} event - The form submission event.
+   */
+  function handleSubmit(event) {
+    event.preventDefault();
+    // Handle login logic here
+    console.log('Email:', email);
+    console.log('Password:', password);
+  }
+</script>
+
   
   <div class="container flex items-center mx-auto px-4 py-4 min-h-[44px] ">
     <div class="mb-2 text-xs text-left flex items-start mr-auto">

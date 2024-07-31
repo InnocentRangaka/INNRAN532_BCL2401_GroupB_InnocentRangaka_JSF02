@@ -69,6 +69,8 @@
 // console.log(window.location)
 </script>
 
+Write JSDoc comments
+
 {#if loadingProducts}
   <div
     class="container mx-auto grid gap-4 grid-cols-1 items-center lg:max-w-none my-4"

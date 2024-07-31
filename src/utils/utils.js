@@ -69,7 +69,13 @@ export function calculateTaxAmount(items) {
     return tax.toFixed(2);
 }
 
-// Create a copy before modifying the cart to avoid side effects
+/**
+ * Create a copy of the cart items with the specified product and quantity updated.
+ * @param {Object} cartItems - The current cart items.
+ * @param {string} productId - The ID of the product to update.
+ * @param {number} quantity - The quantity to add or update.
+ * @returns {Object} The new cart items object.
+ */
 function getNewCartItems(cartItems, productId, quantity) {
     const newCartItems = { ...cartItems }; // Spread operator for a copy
 
@@ -84,6 +90,10 @@ function getNewCartItems(cartItems, productId, quantity) {
 
 let fetchedHTML;
 
+/**
+ * Render the specified page.
+ * @param {string} name - The name of the page to render.
+ */
 export async function renderPage(name) {
     const componentElement = document.querySelector(
         '.pageContent'
@@ -96,7 +106,6 @@ export async function renderPage(name) {
 
         if (!fetchedHTML) {
             const checkCategoryPage = (await pageName) === name;
-            // pageName = checkCategoryPage ? "category" : name;
 
             fetchedHTML = await fetchPage(pageName);
 
@@ -109,79 +118,113 @@ export async function renderPage(name) {
     }
 }
 
+
+/**
+ * Fetch the HTML content for a given page.
+ * @param {string} name - The name of the page to fetch.
+ * @returns {HTMLElement} The fetched HTML content.
+ */
 export async function fetchPage(name) {
     const path = `${window.location.origin}/src/pages/${name.toLowerCase()}.svelte`;
 
     const template = await fetch(path)
         .then((response) => response.text())
         .then((text) =>
-        new DOMParser()
-            .parseFromString(text, "text/html")
-            .body
+            new DOMParser()
+                .parseFromString(text, "text/html")
+                .body
         );
 
     return template;
 }
 
+/**
+ * Split the URL pathname into an array of its parts.
+ * @param {string} urlpath - The URL pathname to split.
+ * @returns {Array<string>} The array of URL parts.
+ */
 export function splitUrlPathname(urlpath) {
     return urlpath.replace(/^\/+|\/+$/g, '').split('/').filter(part => part !== '' && part !== ' ');
 }
 
-export function getCurrentUrlPath(){
+/**
+ * Get the current URL path.
+ * @returns {string} The current URL path.
+ */
+export function getCurrentUrlPath() {
     const url = new URL(window.location.href);
     const replaceOrigin = url.href.replace(url.origin, '').replace(url.search, '')
     const cleanUrl = replaceOrigin.startsWith('/#/') ? replaceOrigin.replace('/#/', '/') : replaceOrigin;
     return url.pathname && url.pathname === cleanUrl ? url.pathname : cleanUrl;
 }
 
-export function getUrlMainPage () {
+/**
+ * Get the main page name from the current URL.
+ * @returns {string} The main page name.
+ */
+export function getUrlMainPage() {
     let newName;
     const currentPath = getCurrentUrlPath().replace(/^\/+|\/+$/g, '');
     const splitedPath = splitUrlPathname(currentPath);
     const first = splitedPath.shift(),
-    last = splitedPath.pop();
+        last = splitedPath.pop();
 
     const isProductDetailPage = first ? first.includes('product') : '';
 
-    if(isProductDetailPage){
+    if (isProductDetailPage) {
         newName = first;
     }
-    
-    if(!isProductDetailPage) {
-        newName = currentPath && currentPath.length == 1 
-        ? first 
-        : currentPath && currentPath.length >= 2
-        ? last 
-        : 'home';
+
+    if (!isProductDetailPage) {
+        newName = currentPath && currentPath.length == 1
+            ? first
+            : currentPath && currentPath.length >= 2
+                ? last
+                : 'home';
     }
 
     return newName ? newName : currentPath;
 }
 
+/**
+ * Create a unique array, removing duplicates and empty values.
+ * @param {Array} array - The array to process.
+ * @returns {Array} The unique array.
+ */
 export const createUniqueArray = (array) => {
-    // Filter out empty values
     return Object.values(array).filter((item, index, self) => self.indexOf(item) === index); // Remove duplicates
 }
 
+/**
+ * Filter an array of objects to contain only unique objects by a specified key.
+ * @param {Array<Object>} array - The array of objects.
+ * @param {string} key - The key to check for uniqueness.
+ * @returns {Array<Object>} The array of unique objects.
+ */
 export function uniqueObjects(array, key) {
     const seen = new Set();
     return array.filter(item => {
-      const value = item[key];
-      if (seen.has(value)) {
-        return false;
-      }
-      seen.add(value);
-      return true;
+        const value = item[key];
+        if (seen.has(value)) {
+            return false;
+        }
+        seen.add(value);
+        return true;
     });
 }
 
-export function parseObjectToArray(object){
-  let parsedObject = {};
-  try {
-    parsedObject = {...JSON.parse(object)};
-  } catch (error) {
-    parsedObject = {...object};
-  }
-  return parsedObject;
+/**
+ * Parse an object or JSON string into an array.
+ * @param {Object|string} object - The object or JSON string to parse.
+ * @returns {Object} The parsed object.
+ */
+export function parseObjectToArray(object) {
+    let parsedObject = {};
+    try {
+        parsedObject = { ...JSON.parse(object) };
+    } catch (error) {
+        parsedObject = { ...object };
+    }
+    return parsedObject;
 }
   

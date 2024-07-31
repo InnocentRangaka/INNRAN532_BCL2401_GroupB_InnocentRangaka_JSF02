@@ -1,67 +1,81 @@
 <script>
-    import { onMount, tick } from 'svelte';
-    import { appStore, initializeProducts } from "../store/store";
-    import ProductCards from '../components/ProductCards.svelte';
-    import ProductCardSkeleton from '../components/ProductCardSkeleton.svelte';
-    import { initializeCategories } from '../api/api'
-    import NotFound from './NotFound.svelte';
+  import { onMount, tick } from 'svelte';
+  import { appStore, initializeProducts } from "../store/store";
+  import ProductCards from '../components/ProductCards.svelte';
+  import ProductCardSkeleton from '../components/ProductCardSkeleton.svelte';
+  import { initializeCategories } from '../api/api'
+  import NotFound from './NotFound.svelte';
 
-    const { subscribe, update, fetchProducts } = appStore;
+  const { subscribe, update, fetchProducts } = appStore;
 
-    let app;
-    $: app = $appStore;
+  let app;
+  $: app = $appStore;
 
-    let getLocation,
-      categoryParams,
-      categoryPath,
-      showHomePage;
+  let getLocation,
+    categoryParams,
+    categoryPath,
+    showHomePage;
 
-    $: categoryParams = app.currentLocation?.params?.category; 
-    $: categoryPath = app.currentLocation.path.replace('/products/category/', '');
-    $: getLocation = window.location.href.replace(window.location.origin, '').replace(window.location.pathname, '');
+  $: categoryParams = app.currentLocation?.params?.category; 
+  $: categoryPath = app.currentLocation.path.replace('/products/category/', '');
+  $: getLocation = window.location.href.replace(window.location.origin, '').replace(window.location.pathname, '');
 
-    let products;
-    $: products = $appStore.products
-    subscribe((state) => {
-      products = state.products
-    });
+  let products;
+  $: products = $appStore.products
+  subscribe((state) => {
+    products = state.products
+  });
 
-    let { loading } = $appStore,
-    productsLength = 20;
+  let { loading } = $appStore,
+  productsLength = 20;
 
-    const fetchAllProducts = (thisType = 'products', thisApp = appStore) => {
-      initializeProducts(thisType, thisApp);
+  /**
+   * Fetches all products and updates the store.
+   * @param {string} thisType - The type of products to fetch.
+   * @param {object} thisApp - The application store.
+   */
+  const fetchAllProducts = (thisType = 'products', thisApp = appStore) => {
+    initializeProducts(thisType, thisApp);
 
-      if(app.products.length < productsLength){
-        if(getLocation.startsWith('#/') && getLocation.endsWith('#/')){
-          appStore.update((state) => ({ ...state, filterItem: "All categories" }));
+    if(app.products.length < productsLength){
+      if(getLocation.startsWith('#/') && getLocation.endsWith('#/')){
+        appStore.update((state) => ({ ...state, filterItem: "All categories" }));
 
-          initializeCategories(appStore);
-          fetchProducts(appStore);
-        }
+        initializeCategories(appStore);
+        fetchProducts(appStore);
       }
     }
+  }
 
-    const isHomePageShown = () =>{
-      // console.log($appStore.currentLocation)
-      // showHomePage = $appStore.pages.productPages.find(name => name == $appStore.pageName)
-    }
+  /**
+   * Determines if the home page is shown based on the current location.
+   */
+  const isHomePageShown = () =>{
+    // console.log($appStore.currentLocation)
+    // showHomePage = $appStore.pages.productPages.find(name => name == $appStore.pageName)
+  }
 
-    onMount(async () => {
-      fetchAllProducts('products', appStore)
-        setTimeout(() => {
-            app.loading.page = false;
-        }, 2000);
-    })
+  /**
+   * Lifecycle hook to run on component mount.
+   * Fetches all products and updates the loading state.
+   */
+  onMount(async () => {
+    fetchAllProducts('products', appStore)
+      setTimeout(() => {
+          app.loading.page = false;
+      }, 2000);
+  })
 
-    $: {
-      tick().then(() => {
-        products;
-        // isHomePageShown();
-      });
-    }
-    
+  $: {
+    tick().then(() => {
+      products;
+      // isHomePageShown();
+    });
+  }
+  
 </script>
+
+
 
 <!-- {#if showHomePage} -->
   <div class="grid justify-center">

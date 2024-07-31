@@ -8,6 +8,7 @@
 
     const { subscribe, update, addToCart } = appStore;
 
+    // Initialize the app store state with empty products and originalProducts arrays
     update((state) => ({ ...state, 
         products: [], 
         originalProducts: []
@@ -31,11 +32,17 @@
 
     let { loading } = $appStore
 
-    
     let fetchedData,
         list = [];
-    
 
+    /**
+     * Fetches wish list items from the API based on the provided object array.
+     * 
+     * @param {Object} objectArray - Array of object IDs to fetch.
+     * @param {Object} [thisStore=appStore] - Store to update with fetched data.
+     * @param {Object} [thisApp=app] - Current app state.
+     * @returns {Promise<Object>} - A promise that resolves to the fetched and cleaned list of products.
+     */
     export const fetchWishItems = async (objectArray, thisStore = appStore, thisApp = app) => {
         if(!objectArray){ return; }
 
@@ -66,7 +73,6 @@
             }));
         }
 
-        
         thisStore.update((state) => ({
             ...state,
             loading: { ...state.loading, products: false },
@@ -82,7 +88,13 @@
         return {response: cleanList};
     };
 
-
+    /**
+     * Loads wish list items and updates the store with the fetched products.
+     * 
+     * @param {Array} [thisIds=wishListIds] - Array of wish list IDs to fetch.
+     * @param {Object} [thisStore=appStore] - Store to update with fetched data.
+     * @param {Object} [thisApp=app] - Current app state.
+     */
     async function loadWishItems(thisIds = wishListIds, thisStore = appStore, thisApp = app ){
         await fetchWishItems(thisIds, thisStore, thisApp)
         if(app.products?.length !== wishListItems){
@@ -93,6 +105,7 @@
         }
     }
 
+    // Fetch and load wish list items on component mount
     onMount(async () => {
         await loadWishItems(wishListIds, appStore, app)
     })
@@ -105,6 +118,7 @@
     }
 
 </script>
+
 
 {#if wishListIds > 0}
     <div class="grid justify-center">

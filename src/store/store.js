@@ -86,9 +86,9 @@ function createAppStore() {
      * @returns {Promise<void>}
      */
     fetchFavourites: async () => {
-      const response = await fetch('/api/favourites');
-      const favourites = await response.json();
-      update((state) => ({ ...state, wishList: favourites }));
+      // const response = await fetch('/api/favourites');
+      // const favourites = await response.json();
+      // update((state) => ({ ...state, wishList: favourites }));
     },
     /**
      * Adds an item to the cart and updates the state.
@@ -190,6 +190,16 @@ function createAppStore() {
 
       return stateWishList.hasOwnProperty(id);
     },
+    /**
+     * Updates the current URL location in the state.
+     * @param {object} location - The location object.
+     * @param {string} location.path - The path of the location.
+     * @param {string} location.params - The params of the location.
+     * @param {string} location.query - The query of the location.
+     * @param {string} location.route - The route of the location.
+     * @param {string} location.userData - The user data of the location.
+     * @param {string} location.componentName - The component name of the location.
+     */
     updateUrlLocation: ({path = '', params = '', query = '', route = '', userData = '', componentName = ''}) => {
       update((state) => ({ 
         ...state,
@@ -203,10 +213,17 @@ function createAppStore() {
         },
       }));
     },
+
+    /**
+     * Gets the current URL location from the state.
+     * @returns {object} - The current location object.
+     */
     getLocation: () => {
       return get(appStore).currentLocation;
     },
-
+    /**
+     * Sorts the products based on the current sorting criteria in the state.
+     */
     sortProducts: () => {
       update((state) => {
         let stateProducts,
@@ -224,6 +241,9 @@ function createAppStore() {
       });
     },
 
+    /**
+     * Searches the products based on the current search term in the state.
+     */
     searchProducts: () => {
       update((state) => { 
         let searchedProducts,
@@ -244,19 +264,34 @@ function createAppStore() {
   };
 }
 
+/**
+ * Create the main application store containing the state and utility functions for the app.
+ * @returns {object} - The Svelte store containing the application state and utility functions.
+ */
 export const appStore = createAppStore();
 
+
+/**
+ * Initializes products by fetching categories and products from the server.
+ * @async
+ * @param {string} type - The type of products to initialize (default is 'products').
+ * @param {object} app - The application store.
+ * @returns {Promise<void>}
+ */
 export const initializeProducts = async (type = 'products', app = appStore) => {
   if(type.toLowerCase() === 'products'){
-    await initializeCategories(app)
-    await fetchProducts(app)
+    await initializeCategories(app);
+    await fetchProducts(app);
   }
 }
 
 let mainPage;
 
+/**
+ * Starts the application by subscribing to the store and rendering the main page.
+ * @param {object} app - The application store.
+ */
 export const start = (app = appStore) => {
-  // app.getLocation(app)
   app.subscribe((app) => {
     mainPage = getUrlMainPage();
     app.pageName = mainPage;
@@ -265,6 +300,9 @@ export const start = (app = appStore) => {
   renderPage(app.pageName);
 }
 
+/**
+ * Event listener for the DOMContentLoaded event to update the loading state of the application store.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   appStore.update((state) => ({...state, loading: {...state.loading, page: false } }));
 });
