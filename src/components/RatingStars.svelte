@@ -1,14 +1,28 @@
 <script>
-    export let ratingNumber
+    /** 
+     * @type {number} The rating number to display as stars.
+     */
+    export let ratingNumber;
 
-    const createArrayAndElements = (number, element) =>{
-      return Array(number).fill(element).join('')
+    /**
+     * Creates a string by repeating a given element a specified number of times.
+     * @param {number} number - The number of times to repeat the element.
+     * @param {string} element - The element to repeat.
+     * @returns {string} - A string containing the repeated elements.
+     */
+    const createArrayAndElements = (number, element) => {
+        return Array(number).fill(element).join('');
     }
 
+    /**
+     * Generates the HTML string for rating stars based on the rating number.
+     * @param {number} number - The rating number.
+     * @returns {string} - The HTML string with the rating stars.
+     */
     const ratingStars = (number) => {
         const ratedStarsNumber = Math.round(number),
-        remainingStars = parseInt(5 - Math.round(number)),
-        nonRatedStarsNumber = remainingStars <= 4 ? remainingStars : 0;
+              remainingStars = parseInt(5 - Math.round(number)),
+              nonRatedStarsNumber = remainingStars <= 4 ? remainingStars : 0;
 
         const goldenStar = `
             <svg class="w-4 h-4 text-yellow-300 ms-1" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 22 20">
@@ -26,7 +40,7 @@
 
         return goldenStars + grayStars;
     }
-
 </script>
 
+<!-- Display the rating stars as HTML -->
 {@html ratingStars(ratingNumber)}

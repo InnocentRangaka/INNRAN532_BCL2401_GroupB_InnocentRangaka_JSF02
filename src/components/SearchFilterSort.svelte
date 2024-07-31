@@ -1,208 +1,247 @@
 <script>
   import { onMount, tick } from "svelte";
-    import { get } from 'svelte/store';
-    import { appStore } from '../store/store';
+  import { get } from 'svelte/store';
+  import { appStore } from '../store/store';
   
-    const { subscribe, update, fetchProducts, setSorting } = appStore;
+  const { subscribe, update, fetchProducts, setSorting } = appStore;
 
-    let app, currentLocation;
-    $: app = $appStore;
+  /** @type {Object} The app state. */
+  let app, currentLocation;
+  $: app = $appStore;
 
-    $: currentLocation = $appStore.currentLocation;
-    subscribe((state) => { currentLocation = state.currentLocation });
+  /** @type {string} The current location in the app. */
+  $: currentLocation = $appStore.currentLocation;
+  subscribe((state) => { currentLocation = state.currentLocation });
 
-    $: currentQuery = $appStore.currentLocation.query;
-    subscribe((state) => {
-      currentQuery = state.currentLocation.query
-    });
+  /** @type {Object} The current query parameters from the app store. */
+  $: currentQuery = $appStore.currentLocation.query;
+  subscribe((state) => {
+    currentQuery = state.currentLocation.query
+  });
+
+  /** @type {string} The search term used for filtering products. */
+  let searchTerm;
+  subscribe((state) => {
+    searchTerm = state.searchTerm;
+  });
+
+  /** @type {string} The selected filter item. */
+  let filterItem;
+  subscribe((state) => {
+    filterItem = state.filterItem;
+  });
+
+  /** @type {boolean} Indicates whether the dropdown is open. */
+  let dropdownOpen;
+  subscribe((state) => {
+    dropdownOpen = state.dropdownOpen;
+  });
+
+  /** @type {string} The sorting method applied to the products. */
+  let sorting;
+  subscribe((state) => {
+    sorting = state.sorting;
+  });
+
+  /** @type {Array} List of categories. */
+  let categories;
+  subscribe((state) => {
+    categories = state.categories;
+  });
   
-    let searchTerm;
-    subscribe((state) => {
-        searchTerm = state.searchTerm;
-    });
-
-    let filterItem;
-    subscribe((state) => {
-        filterItem = state.filterItem;
-    });
-
-    let dropdownOpen;
-    subscribe((state) => {
-        dropdownOpen = state.dropdownOpen;
-    });
-
-    // $: dropdownOpen = get(appStore).dropdownOpen;
-    let sorting;
-    subscribe((state) => {
-        sorting = state.sorting;
-    });
-
-    let categories;
-    subscribe((state) => {
-        categories = state.categories;
-    });
+  /**
+   * Toggles the visibility of the filter dropdown.
+   */
+  const toggleFilterDropdown = () => {
+    update((state) => ({ ...state, dropdownOpen: !dropdownOpen }));
+  };
   
-    const toggleFilterDropdown = () => {
-      update((state) => ({ ...state, dropdownOpen: !dropdownOpen }));
-    };
-  
-    const setFilterItem = (item, clicked=true) => {
-      update((state) => ({ ...state, dropdownOpen: false }))
+  /**
+   * Sets the selected filter item and updates the URL and products list.
+   * @param {string} item - The selected filter item.
+   * @param {boolean} [clicked=true] - Indicates if the filter was clicked.
+   */
+  const setFilterItem = (item, clicked=true) => {
+    update((state) => ({ ...state, dropdownOpen: false }));
+    update((state) => ({ ...state, filterItem: item }));
+    
+    if(clicked){
+      updateURL(appStore);
+    }
 
-      update((state) => ({ ...state, filterItem: item }));
-      
-      if(clicked){
-        updateURL(appStore);
-      }
-
-      fetchProducts(appStore);
-    };
+    fetchProducts(appStore);
+  };
   
-    const searchProducts = (term, clicked=true) => {
-      update((state) => ({ ...state, searchTerm: term }));
-      let searchedProducts,
+  /**
+   * Filters the products based on the search term and updates the URL and products list.
+   * @param {string} term - The search term used for filtering products.
+   * @param {boolean} [clicked=true] - Indicates if the search was triggered by a click.
+   */
+  const searchProducts = (term, clicked=true) => {
+    update((state) => ({ ...state, searchTerm: term }));
+    let searchedProducts,
       stateProducts = get(appStore).originalProducts;
 
-      if (searchTerm.trim() !== '') {
-        const filteredProducts = stateProducts.filter((product) => product.title.toLowerCase().includes(searchTerm.toLowerCase()));
-        searchedProducts = JSON.parse(JSON.stringify(filteredProducts));
-      } else {
-        searchedProducts = JSON.parse(JSON.stringify(stateProducts));
-      }
-      
-      if(clicked){
-        updateURL(appStore);
-      }
+    if (searchTerm.trim() !== '') {
+      const filteredProducts = stateProducts.filter((product) => product.title.toLowerCase().includes(searchTerm.toLowerCase()));
+      searchedProducts = JSON.parse(JSON.stringify(filteredProducts));
+    } else {
+      searchedProducts = JSON.parse(JSON.stringify(stateProducts));
+    }
+    
+    if(clicked){
+      updateURL(appStore);
+    }
 
-      update((state) => ({ ...state, products: searchedProducts }));
-    };
+    update((state) => ({ ...state, products: searchedProducts }));
+  };
   
-    const sortProducts = (sort, clicked=true) => {
-      update((state) => ({ ...state, sorting: sort }));
-      let stateProducts,
+  /**
+   * Sorts the products based on the selected sorting method and updates the URL and products list.
+   * @param {string} sort - The sorting method applied to the products.
+   * @param {boolean} [clicked=true] - Indicates if the sorting was triggered by a click.
+   */
+  const sortProducts = (sort, clicked=true) => {
+    update((state) => ({ ...state, sorting: sort }));
+    let stateProducts,
       sortedProducts;
 
-      if (sorting !== 'default') {
-        stateProducts = get(appStore).products
-        sortedProducts = stateProducts.sort((a, b) => sorting === 'low' ? a.price - b.price : b.price - a.price);
-      } else {
-        stateProducts = get(appStore).originalProducts
-        sortedProducts = JSON.parse(JSON.stringify(stateProducts));
-      }
-      
-      if(clicked){
-        updateURL(appStore);
-      }
+    if (sorting !== 'default') {
+      stateProducts = get(appStore).products
+      sortedProducts = stateProducts.sort((a, b) => sorting === 'low' ? a.price - b.price : b.price - a.price);
+    } else {
+      stateProducts = get(appStore).originalProducts
+      sortedProducts = JSON.parse(JSON.stringify(stateProducts));
+    }
+    
+    if(clicked){
+      updateURL(appStore);
+    }
 
-      update((state) => ({ ...state, products: sortedProducts }));
-    };
+    update((state) => ({ ...state, products: sortedProducts }));
+  };
   
-    const capitalizeFirstLetters = (str) => {
-      return str ? str.replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null;
+  /**
+   * Capitalizes the first letters of each word in the given string.
+   * @param {string} str - The input string to be capitalized.
+   * @returns {string|null} The capitalized string or null if the input is null.
+   */
+  const capitalizeFirstLetters = (str) => {
+    return str ? str.replace(/(?:^|\s)\S/g, match => match.toUpperCase()) : null;
+  }
+
+  /**
+   * Handles the search parameters from the URL and updates the filters, sorting, and search term accordingly.
+   */
+  const handleSearchParams = () => {
+    let params = new URLSearchParams(window.location.search),
+      query = new URLSearchParams(window.location.query);
+
+    let filter = '';
+    let sort = '';
+    let search = '';
+
+    if(params.size > 0){
+      filter = params.get('filter') || '';
+      sort = params.get('sort') || '';
+      search = params.get('search') || '';
     }
 
-    const handleSearchParams = () => {
-      let params = new URLSearchParams(window.location.search),
-        query = new URLSearchParams(window.location.query);
+    if(params.size === 0 && query.size > 0){
+      filter = query.get('filter') || '';
+      sort = query.get('sort') || '';
+      search = query.get('search') || '';
+    }
+    
+    if(params.size === 0 && query.size === 0 && currentQuery) {
+      query = new URLSearchParams(currentQuery);
 
-      let filter = '';
-      let sort = '';
-      let search = '';
+      filter = query.get('filter') || '';
+      sort = query.get('sort') || '';
+      search = query.get('search') || '';
+    }
 
-      if(params.size > 0){
-        filter = params.get('filter') || '';
-        sort = params.get('sort') || '';
-        search = params.get('search') || '';
+    if(params.size === 0 && query.size === 0 && !currentQuery){
+      if(window.location.hash.startsWith('#/?')){
+        const queryString = window.location.hash.replace('#/?', '');
+        let hash = new URLSearchParams(queryString);
 
-      }
-
-      if(params.size === 0 && query.size > 0){
-        filter = query.get('filter') || '';
-        sort = query.get('sort') || '';
-        search = query.get('search') || '';
-      }
-      
-      if(params.size === 0 && query.size === 0 && currentQuery) {
-        query = new URLSearchParams(currentQuery);
-
-        filter = query.get('filter') || '';
-        sort = query.get('sort') || '';
-        search = query.get('search') || '';
-      }
-
-      if(params.size === 0 && query.size === 0 && !currentQuery){
-        if(window.location.hash.startsWith('#/?')){
-          const queryString = window.location.hash.repeat('#/?')
-          let hash = new URLSearchParams(window.location.hash);
-
-          filter = hash.get('#/?filter') || hash.get('filter') || '';
-          sort = hash.get('#/?sort') || hash.get('sort') || '';
-          search = hash.get('#/?search') || hash.get('search') || '';
-        }
-      }
-
-      if(search && search !== 'undefined'){
-        searchProducts(search, false)
-      }
-
-      if(filter && filter !== 'undefined'){
-        setFilterItem(filter, false)
-      }
-
-      if(sort && sort !== 'undefined'){
-        sortProducts(sort, false)
+        filter = hash.get('filter') || '';
+        sort = hash.get('sort') || '';
+        search = hash.get('search') || '';
       }
     }
 
-    function updateURL(thisStore) {
-      const url = new URLSearchParams(window.location),
-        pathName =  new URLSearchParams(window.location.pathname),
-        params = new URLSearchParams(window.location.search);
-
-        let sorting = get(thisStore).sorting,
-          filtering = get(thisStore).filterItem,
-          searching = get(thisStore).searchTerm,
-          path = window.location.pathname.startsWith('/#/') ? '' : `${window.location.pathname}/#/`;
-
-          let isDeleting = false;
-
-        if (filtering !== 'All categories') {
-            params.set('filter', filtering);
-        } else {
-            params.delete('filter');
-            isDeleting = true;
-        }
-        if (sorting && sorting !== 'default') {
-            params.set('sort', sorting);
-            isDeleting = true;
-        } else {
-            params.delete('sort');
-            isDeleting = true;
-        }
-
-        if(isDeleting){
-          if(params.size == 0){
-            pathName.delete('?')
-            window.history.replaceState({}, '', `${path.replace('//#/', '/#/').replace('?', '')}`);
-            console.log('d')
-          }
-          else {
-            window.history.replaceState({}, '', `${path.replace('//#/', '/#/')}?${params}`);
-          }
-        }
-        else {
-            window.history.replaceState({}, '', `${path.replace('//#/', '/#/')}?${params}`);
-          console.log('p2')
-        } 
-
-        return {sort: sorting, filter: filtering, search: searching}
+    if(search && search !== 'undefined'){
+      searchProducts(search, false);
     }
 
-    onMount(async () => {
-        handleSearchParams();
-    })
+    if(filter && filter !== 'undefined'){
+      setFilterItem(filter, false);
+    }
 
-  </script>
+    if(sort && sort !== 'undefined'){
+      sortProducts(sort, false);
+    }
+  }
+
+  /**
+   * Updates the URL with the current sorting, filtering, and search parameters.
+   * @param {Object} thisStore - The app store object.
+   * @returns {Object} An object containing the current sort, filter, and search values.
+   */
+  function updateURL(thisStore) {
+    const url = new URLSearchParams(window.location),
+      pathName = new URLSearchParams(window.location.pathname),
+      params = new URLSearchParams(window.location.search);
+
+    let sorting = get(thisStore).sorting,
+      filtering = get(thisStore).filterItem,
+      searching = get(thisStore).searchTerm,
+      path = window.location.pathname.startsWith('/#/') ? '' : `${window.location.pathname}/#/`;
+
+    let isDeleting = false;
+
+    if (filtering !== 'All categories') {
+      params.set('filter', filtering);
+    } else {
+      params.delete('filter');
+      isDeleting = true;
+    }
+    if (sorting && sorting !== 'default') {
+      params.set('sort', sorting);
+      isDeleting = true;
+    } else {
+      params.delete('sort');
+      isDeleting = true;
+    }
+
+    if(isDeleting){
+      if(params.size == 0){
+        pathName.delete('?');
+        window.history.replaceState({}, '', `${path.replace('//#/', '/#/').replace('?', '')}`);
+      }
+      else {
+        window.history.replaceState({}, '', `${path.replace('//#/', '/#/')}?${params}`);
+      }
+    }
+    else {
+      window.history.replaceState({}, '', `${path.replace('//#/', '/#/')}?${params}`);
+    }
+
+    return {sort: sorting, filter: filtering, search: searching};
+  }
+
+  /**
+   * Lifecycle method to run on component mount.
+   * Initializes the search parameters from the URL.
+   */
+  onMount(async () => {
+    handleSearchParams();
+  });
+
+</script>
+
 
   <div class="container grid grid-rows-2 lg:grid-rows-1 lg:grid-cols-2 gap-y-4 gap-x-48 lg:items-start mt-3 mx-auto px-2 md:px-0 justify-center">
     <!-- Filter -->

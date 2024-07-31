@@ -1,8 +1,13 @@
 <script>
-    const goBack = () => {
-      window.history.back();
-    }
+  /**
+   * Navigates the user to the previous page in the browser's history.
+   * This function calls the `window.history.back()` method to move back one step in the browsing history.
+   */
+  const goBack = () => {
+    window.history.back();
+  }
 </script>
+
 
 <div class="container flex items-center mx-auto px-4 py-4 min-h-[44px] ">
     <div class="mb-2 text-xs text-left flex items-start mr-auto">
