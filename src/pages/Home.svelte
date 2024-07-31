@@ -82,8 +82,7 @@
     {#if app.loading.products}
       <div
         class={
-          "container mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none "
-          + (app.loading.page ? " my-4" : " my-0")
+          "container mx-auto grid gap-4 grid-cols-1 lg:grid-cols-4 md:grid-cols-2 items-center lg:max-w-none my-4"
         }
       >
         {#each Array(20) as i}

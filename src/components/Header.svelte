@@ -1,52 +1,82 @@
 <script>
-    import { onMount } from 'svelte';
-    import { fly } from 'svelte/transition';
-    import { link } from 'svelte-spa-router';
-    import { appStore } from "../store/store";
+  import { onMount } from 'svelte';
+  import { fly } from 'svelte/transition';
+  import { link } from 'svelte-spa-router';
+  import { appStore } from "../store/store";
 
-    const { subscribe, update, initializeCategories } = appStore;
+  const { subscribe, update, initializeCategories } = appStore;
 
-    let app;
-    $: app = $appStore;
+  /** @type {Object} The app state. */
+  let app;
+  $: app = $appStore;
     
-    initializeCategories(appStore)
+  /** 
+   * Initialize categories on app store. 
+   * @param {Object} store - The app store.
+   */
+  initializeCategories(appStore)
   
-    let mobileMenuOpen = false;
+  /** @type {boolean} State of mobile menu (open or closed). */
+  let mobileMenuOpen = false;
 
-    let categories = [];
-    $: categories = app.categories;
-    subscribe((state) => {
-      categories = state.categories;
-    });
+  /** @type {Array} List of categories. */
+  let categories = [];
+  $: categories = app.categories;
+  subscribe((state) => {
+    categories = state.categories;
+  });
 
-    let wishListItems = 0;
-    $: wishListItems = Object.values(app.wishList).length;
-    subscribe((state) => {
-      wishListItems = Object.values(state.wishList).length;
-    });
+  /** @type {number} Number of items in the wish list. */
+  let wishListItems = 0;
+  $: wishListItems = Object.values(app.wishList).length;
+  subscribe((state) => {
+    wishListItems = Object.values(state.wishList).length;
+  });
 
-    let cartTotalItems = 0;
-    $: cartTotalItems = app.cart.totalItems;
-    subscribe((state) => {
-      cartTotalItems = state.cart.totalItems;
-    });
+  /** @type {number} Total number of items in the cart. */
+  let cartTotalItems = 0;
+  $: cartTotalItems = app.cart.totalItems;
+  subscribe((state) => {
+    cartTotalItems = state.cart.totalItems;
+  });
   
-    onMount(() => {
-      // console.log(categories)
-      // console.log($appStore.categories)
-    });
+  /**
+   * Lifecycle method to run on component mount.
+   */
+  onMount(() => {
+    // console.log(categories)
+    // console.log($appStore.categories)
+  });
   
-    const isAuthPages = (pageName) => {
-      const authPages = ['login', 'register'];
-      return authPages.includes(pageName);
-    };
+  /**
+   * Check if the page is an authentication page.
+   * @param {string} pageName - The name of the page.
+   * @returns {boolean} - True if the page is an authentication page, otherwise false.
+   */
+  const isAuthPages = (pageName) => {
+    const authPages = ['login', 'register'];
+    return authPages.includes(pageName);
+  };
   
-    const menuName = (category) => {
-      const cleanCategory = category ? category.toLowerCase() : category
-      return `${cleanCategory.replace("'s clothing", "")}`
-    };
-    const capitalizeMenuName = (name) => name.charAt(0).toUpperCase() + name.slice(1);
+  /**
+   * Get the menu name from the category name.
+   * @param {string} category - The name of the category.
+   * @returns {string} - The cleaned category name.
+   */
+  const menuName = (category) => {
+    const cleanCategory = category ? category.toLowerCase() : category;
+    return `${cleanCategory.replace("'s clothing", "")}`;
+  };
+
+  /**
+   * Capitalize the first letter of the menu name.
+   * @param {string} name - The name to be capitalized.
+   * @returns {string} - The name with the first letter capitalized.
+   */
+  const capitalizeMenuName = (name) => name.charAt(0).toUpperCase() + name.slice(1);
+
 </script>
+
 
 <header class="sticky z-50 top-0">
     <nav class="bg-white border-gray-200">
