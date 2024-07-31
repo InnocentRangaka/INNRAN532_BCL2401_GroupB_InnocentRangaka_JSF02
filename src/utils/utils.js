@@ -3,19 +3,33 @@ const TAX_RATE = Number(15); // Number
 const SHIPPING_COST_STANDARD = Number(5.00); // Number
 const SHIPPING_COST_EXPRESS = Number(16.00); // Number
 
-// Helper functions
+/**
+ * Calculate the total number of items in the cart.
+ * @param {Object} cartItems - The items in the cart.
+ * @returns {number} The total number of items.
+ */
 function calculateCartTotalItems(cartItems) {
     return Object.values(cartItems).length;
 }
 
+/**
+ * Calculate the subtotal amount for the given items.
+ * @param {Object} items - The items in the cart.
+ * @returns {string} The subtotal amount formatted to two decimal places.
+ */
 export const calculateSubTotalAmount = (items) => {
     let total = 0;
-    if(items){
+    if (items) {
         total = Object.values(items).reduce((amount, item) => amount + (item.price * item.quantity), 0);
     }
     return parseFloat(total).toFixed(2);
 };
 
+/**
+ * Calculate the total amount for the cart including tax and shipping.
+ * @param {Object} items - The items in the cart.
+ * @returns {string} The total amount formatted to two decimal places.
+ */
 export const calculateCartTotal = (items) => {
     const subTotal = parseFloat(calculateSubTotalAmount(items));
     const tax = (subTotal * TAX_RATE) / 100;
@@ -23,10 +37,20 @@ export const calculateCartTotal = (items) => {
     return (subTotal + tax + shipping).toFixed(2);
 };
 
+/**
+ * Calculate the amount for a single item.
+ * @param {Object} item - The item to calculate the amount for.
+ * @returns {string} The amount for the item formatted to two decimal places.
+ */
 function calculateAmount(item) {
     return (item.price * item.quantity).toFixed(2);
 }
 
+/**
+ * Calculate the total amount for the cart including tax and shipping.
+ * @param {Object} cart - The cart object containing items and shipping rate.
+ * @returns {string} The total cart amount formatted to two decimal places.
+ */
 function calculateTotalCartAmount(cart) {
     const subTotal = calculateSubTotalAmount(cart.cartItems);
     const shipping = parseFloat(cart.shippingRate);
@@ -34,10 +58,15 @@ function calculateTotalCartAmount(cart) {
     return (subTotal + shipping + tax).toFixed(2);
 }
 
+/**
+ * Calculate the tax amount for the given items.
+ * @param {Object} items - The items in the cart.
+ * @returns {string} The tax amount formatted to two decimal places.
+ */
 export function calculateTaxAmount(items) {
     const subTotal = calculateSubTotalAmount(items);
     const tax = (subTotal * TAX_RATE) / 100;
-    return (tax).toFixed(2);
+    return tax.toFixed(2);
 }
 
 // Create a copy before modifying the cart to avoid side effects

@@ -80,11 +80,21 @@ function createAppStore() {
     initializeCategories,
     fetchProducts,
     fetchSingleProduct,
+    /**
+     * Fetches favourite products from the server and updates the state.
+     * @async
+     * @returns {Promise<void>}
+     */
     fetchFavourites: async () => {
       const response = await fetch('/api/favourites');
       const favourites = await response.json();
       update((state) => ({ ...state, wishList: favourites }));
     },
+    /**
+     * Adds an item to the cart and updates the state.
+     * @param {object} item - The item to add to the cart.
+     * @param {HTMLElement|null} eventTarget - The event target (optional).
+     */
     addToCart: (item, eventTarget = null) => {
       update((state) => {
         const newCartItems = { ...state.cart.cartItems };
@@ -118,6 +128,10 @@ function createAppStore() {
         };
       });
     },
+    /**
+     * Removes an item from the cart and updates the state.
+     * @param {number} id - The ID of the item to remove from the cart.
+     */
     removeFromCart: (id) => {
       update((state) => {
         const newCartItems = { ...state.cart.cartItems };
@@ -141,10 +155,20 @@ function createAppStore() {
         };
       });
     },
+    /**
+     * Checks if an item is in the cart.
+     * @param {number} id - The ID of the item to check.
+     * @param {object} object - The cart items object.
+     * @returns {boolean|object} - The item if found, otherwise false.
+     */
     isInCartItems(id, object) {
       const parsedObject = parseObjectToArray(object);
       return Object.values(parsedObject).find(item => item.id === id) || false;
     },
+    /**
+     * Adds or removes an item from the wishlist.
+     * @param {number} id - The ID of the item to add/remove.
+     */
     addToFavourites: (id) => {
       update((state) => {
         const newWishList = { ...state.wishList };
@@ -156,6 +180,11 @@ function createAppStore() {
         return { ...state, wishList: newWishList };
       });
     },
+    /**
+     * Checks if an item is in the wishlist.
+     * @param {number} id - The ID of the item to check.
+     * @returns {boolean} - True if the item is in the wishlist, otherwise false.
+     */
     isInWishList: (id) => {
       let stateWishList = get(appStore).wishList;
 
