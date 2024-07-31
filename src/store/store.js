@@ -3,6 +3,10 @@ import { location, params, querystring } from 'svelte-spa-router'
 import { fetchProducts, fetchSingleProduct, initializeCategories } from '../api/api';
 import { calculateSubTotalAmount, calculateCartTotal, calculateTaxAmount, renderPage, fetchPage, getUrlMainPage, parseObjectToArray } from '../utils/utils'
 
+/**
+ * Creates the main application store with state management and utility functions.
+ * @returns {object} - The Svelte store containing the application state and utility functions.
+ */
 function createAppStore() {
   const { subscribe, set, update } = writable({
     currentLocation: {
@@ -23,7 +27,7 @@ function createAppStore() {
     originalProducts: [],
     selectedProduct: {},
     loading: {
-      products: true, // Specific loading states
+      products: true,
       cart: false,
       page: true,
     },
@@ -213,17 +217,10 @@ function createAppStore() {
 
 export const appStore = createAppStore();
 
-// appStore.subscribe((state) => {
-//   console.log('Store updated:', state);
-// });
-
-// export const appState = get(appStore);
-
 export const initializeProducts = async (type = 'products', app = appStore) => {
   if(type.toLowerCase() === 'products'){
     await initializeCategories(app)
     await fetchProducts(app)
-    // console.log("hello")
   }
 }
 
@@ -238,11 +235,6 @@ export const start = (app = appStore) => {
 
   renderPage(app.pageName);
 }
-
-// export const startProductPage = (type = 'products', app = appStore) => {
-//   start(app);
-//   initializeProducts(type, app);
-// }
 
 document.addEventListener('DOMContentLoaded', () => {
   appStore.update((state) => ({...state, loading: {...state.loading, page: false } }));

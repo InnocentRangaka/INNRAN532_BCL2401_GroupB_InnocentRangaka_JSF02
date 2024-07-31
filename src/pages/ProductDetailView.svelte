@@ -1,7 +1,6 @@
 <script>
   import { onMount, afterUpdate } from "svelte";
   import { params, location } from "svelte-spa-router";
-  // import { page } from "../store/store";
   import { appStore, initializeProducts } from "../store/store";
   import { fetchSingleProduct } from "../api/api";
   import ProductCards from "../components/ProductCards.svelte";
@@ -20,7 +19,7 @@
   let urlPath = $location;
 
   let id = $params?.id || null;
-
+ 
   if (!id) {
     const isProductPath = urlPath.startsWith("/product/");
     const reducedPath = isProductPath
@@ -78,7 +77,6 @@
   </div>
 {/if}
 {#if !loadingProducts && !app.error}
-  <h1>Product Detail View {id}</h1>
   <TopBackLink />
 
   <div>
@@ -112,9 +110,9 @@
               {product.price}
             </h3>
             <button
-              on:click={(event) => addToCart(product, event.target)}
+              id={`add-to-cart-${product.id}`}
+              on:click={() => addToCart(product, event.target)}
               class="inline-flex justify-center bg-cyan-700 hover:bg-cyan-900 w-[90%] md:w-[14rem] lg:w-[14rem] font-bold text-white py-2 px-4 rounded"
-              disabled={cart.addToCartText !== "Add to Cart"}
             >
               {cart.addToCartText}
             </button>
