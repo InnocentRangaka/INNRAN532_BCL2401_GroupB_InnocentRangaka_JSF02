@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import { get } from 'svelte/store';
   import { fly } from 'svelte/transition';
   import { link } from 'svelte-spa-router';
   import { appStore } from "../store/store";
@@ -9,6 +10,9 @@
   /** @type {Object} The app state. */
   let app;
   $: app = $appStore;
+
+  let pageName;
+  $: pageName = get(appStore).pageName
     
   /** 
    * Initialize categories on app store. 
@@ -50,12 +54,12 @@
   
   /**
    * Check if the page is an authentication page.
-   * @param {string} pageName - The name of the page.
+   * @param {string} name - The name of the page.
    * @returns {boolean} - True if the page is an authentication page, otherwise false.
    */
-  const isAuthPages = (pageName) => {
+  const isAuthPages = (name) => {
     const authPages = ['login', 'register'];
-    return authPages.includes(pageName);
+    return authPages.includes(name);
   };
   
   /**
@@ -93,10 +97,10 @@
   
         <div class="hidden lg:flex items-center space-x-8">
           {#if categories.length > 0}
-          <a href={'#/'} class="font-medium text-gray-700 md:hover:text-blue-700">All</a>
+          <a href={'#/'} class="font-medium {pageName == 'home' || pageName == '#/' ? 'text-cyan-700': 'text-gray-700'} md:hover:text-blue-700">All</a>
           {/if}
           {#each categories as category}
-            <a href={'#/products/category/' + menuName(category)} class="font-medium text-gray-700 md:hover:text-blue-700">{capitalizeMenuName(menuName(category))}</a>
+            <a href={'#/products/category/' + menuName(category)} class="font-medium {pageName == menuName(category) ? 'text-cyan-700': 'text-gray-700'} md:hover:text-blue-700">{capitalizeMenuName(menuName(category))}</a>
           {/each}
         </div>
   
@@ -119,7 +123,7 @@
             <div class="hidden md:block md:w-auto" id="navbar-dropdown">
               <ul class="flex flex-col top-10 font-medium p-4 md:p-0 mt-4 border border-gray-100 rounded-lg bg-white md:space-x-6 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
                 <li>
-                  <a href="/wishlist" use:link class="group hover:bg-gray-100 md:hover:bg-transparent">
+                  <a href="#/wishlist" use:link class="group hover:bg-gray-100 md:hover:bg-transparent">
                     <div class="hidden lg:block md:block relative">
                       {#if wishListItems}
                         <div class="t-0 absolute left-3 -top-4">
@@ -127,7 +131,7 @@
                         </div>
                       {/if}
                       <svg
-                        class="h-6 w-6 stroke-gray-700 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
+                        class="h-6 w-6 {pageName == 'wishlist' ? 'stroke-cyan-700': 'stroke-gray-700'} group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer"
                         aria-hidden="true"
                         xmlns="http://www.w3.org/2000/svg"
                         fill="none"
@@ -145,7 +149,7 @@
                   </a>
                 </li>
                 <li>
-                  <a href="/cart" use:link class="group hover:bg-gray-100 md:hover:bg-transparent">
+                  <a href="#/cart" use:link class="group hover:bg-gray-100 md:hover:bg-transparent">
                     <div class="hidden lg:block md:block relative">
                       {#if cartTotalItems}
                         <div class="t-0 absolute left-3 -top-4">
@@ -153,14 +157,14 @@
                         </div>
                       {/if}
                       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" 
-                        class="h-6 w-6 stroke-gray-700 group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer">
+                        class="h-6 w-6 {pageName == 'cart' ? 'stroke-cyan-700': 'stroke-gray-700'} group-hover:bg-gray-100 md:group-hover:stroke-blue-700 cursor-pointer">
                         <path stroke-linecap="round" stroke-linejoin="round" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
                       </svg>
                     </div>
                   </a>
                 </li>
                 <li>
-                  <a href="/auth/login" use:link class="block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+                  <a href="/auth/login" use:link class="block py-2 px-3 {pageName == 'login' ? 'text-cyan-700': 'text-gray-700'} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                     Login
                   </a>
                 </li>
@@ -176,7 +180,7 @@
           <ul class="flex flex-col top-10 font-medium p-4 md:p-0 border border-gray-100 rounded-lg bg-white md:space-x-8 rtl:space-x-reverse md:flex-row md:mt-0 md:border-0">
             {#each categories as category}
               <li>
-                <a href={menuName(category)} class="block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+                <a href={menuName(category)} class="block py-2 px-3 {pageName == menuName(category) ? 'text-cyan-700': 'text-gray-700'} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                   {capitalizeMenuName(category)}
                 </a>
               </li>
@@ -202,7 +206,7 @@
               </a>
             </li>
             <li>
-              <a href="/auth/login" use:link class="block py-2 px-3 text-gray-700 rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
+              <a href="/auth/login" use:link class="block py-2 px-3 {pageName == 'login' ? 'text-cyan-700': 'text-gray-700'} rounded hover:bg-gray-100 md:hover:bg-transparent md:border-0 md:hover:text-blue-700 md:p-0">
                 Login
               </a>
             </li>
