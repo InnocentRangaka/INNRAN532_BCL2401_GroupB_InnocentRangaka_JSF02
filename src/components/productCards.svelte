@@ -7,21 +7,48 @@
 
     const { subscribe, addToCart, isInWishList } = appStore;
 
+    /**
+     * @typedef {Object} AppState
+     * @property {Array} products - List of products.
+     * @property {string} currency - Currency symbol.
+     * @property {Array} cart - Shopping cart items.
+     * @property {Object} modal - Modal state.
+     */
+
+    /** @type {Object} The app state. */
     let app;
     $: app = appStore;
 
+    /** @type {Array} List of products. */
     let products;
+    /**
+     * Reactively updates the `products` variable whenever the app store changes.
+     */
     $: products = $appStore.products;
+    /**
+     * Subscribes to app store and sets local state variables.
+     */
     appStore.subscribe((state) => {
       products = $appStore.products;
     });
 
+    /** @type {string} Currency symbol. */
     let currency = '$';
+    /**
+     * Reactively updates the `currency` variable whenever the app store changes.
+     */
     $: currency = $appStore.currency;
     
+    /** @type {Object} Cart details from the app store. */
     let cart = get(appStore).cart;
+    
+    /** @type {Object} Modal state from the app store. */
     let modal = get(appStore).modal;
 
+    /**
+     * Reactive statement to update the products list
+     * whenever the state of the app store changes.
+     */
     $: {
       tick().then(() => {
         products;

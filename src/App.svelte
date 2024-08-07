@@ -15,7 +15,7 @@
 
     setTimeout(() => {
       app.loading.page = false;
-    }, 2000);
+    }, 1000);
 
     // await fetchInitialData();
     // await fetchProductsData();

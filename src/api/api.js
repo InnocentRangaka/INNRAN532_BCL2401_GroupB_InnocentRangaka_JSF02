@@ -24,40 +24,54 @@ export const fetchProducts = async (app) => {
 
     app.update((state) => ({ ...state, loading: { ...state.loading, products: true } }));
 
-    try {
-        const response = stateFilterItem !== 'All categories'
-            ? await fetch(`${API_URL}products/category/${stateFilterItem}`)
-            : await fetch(`${API_URL}products`);
-
-        if (!response.ok) {
-            throw new Error('Data fetching failed :( , please check your network connection and reload.');
+    if (stateFilterItem !== 'All categories') {
+        app.update((state) => ({ ...state, loading: { ...state.loading, products: true } }));
+        const response = await fetch(`${API_URL}products/category/${stateFilterItem}`);
+        if(!response.ok){
+          app.update((state) => ({ ...state, error: { ...state.error, 
+            status: response.status,
+            message: 'Data fetching failed :( , please check your network connection and reload.',
+            type: 'network/fetch', 
+            }
+          }));
         }
-
         foundProducts = await response.json();
-
-        if (stateSorting && stateSorting !== 'default') {
-            foundProducts = foundProducts.sort((a, b) => 
-                stateSorting === 'low' ? a.price - b.price : b.price - a.price
-            );
-        }
-
-        app.update((state) => ({
-            ...state,
-            products: foundProducts,
-            originalProducts: JSON.parse(JSON.stringify(foundProducts)),
-            loading: { ...state.loading, products: false },
-        }));
-    } catch (error) {
-        app.update((state) => ({ 
-            ...state, 
-            error: { 
-                status: response.status,
-                message: error.message,
-                type: 'network/fetch', 
-            },
-            loading: { ...state.loading, products: false }
-        }));
     }
+    else{
+        app.update((state) => ({ ...state, loading: { ...state.loading, products: true } }));
+        const response = await fetch(`${API_URL}products`);
+        if(!response.ok){
+          if(!response.ok){
+            app.update((state) => ({ ...state, error: { ...state.error, 
+              status: response.status,
+              message: 'Data fetching failed :( , please check your network connection and reload.',
+              type: 'network/fetch', 
+              }
+            }));
+          }
+        }
+        foundProducts = await response.json();
+    }
+
+    if(stateSorting && stateSorting !== 'default'){
+
+      const { getLocation } = app;
+      
+      let urlQuery = getLocation().query
+      if(urlQuery.includes('sort')){
+        foundProducts = Object.values(foundProducts).sort((a, b) => stateSorting === 'low' ? a.price - b.price : b.price - a.price);
+      }
+      else {
+        app.update((state) => ({ ...state, sorting: 'default' }));
+      }
+    }
+
+    app.update((state) => ({
+        ...state,
+        products: foundProducts,
+        originalProducts: JSON.parse(JSON.stringify(foundProducts)),
+        loading: { ...state.loading, products: false },
+    }));
 };
 
 /**

@@ -27,7 +27,7 @@ function createAppStore() {
     originalProducts: [],
     selectedProduct: {},
     loading: {
-      products: true,
+      products: true, // Specific loading states
       cart: false,
       page: true,
     },
@@ -292,6 +292,7 @@ let mainPage;
  * @param {object} app - The application store.
  */
 export const start = (app = appStore) => {
+  // app.getLocation(app)
   app.subscribe((app) => {
     mainPage = getUrlMainPage();
     app.pageName = mainPage;

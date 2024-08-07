@@ -201,9 +201,9 @@
                                             bind:value={cartItem.quantity}
                                             readonly
                                         />
-                                        <select class=" w-[40px] z-1 "
+                                        <select class=" w-[40px] z-1"
                                             bind:this={selectEl}
-                                            on:change={(event) => {updateQuantity(event.target, cartItem, selectEl); console.log(cartItems[Object.values(cartItems).indexOf(cartItem)].quantity)}}
+                                            on:change={(event) => {updateQuantity(event.target, cartItem, selectEl) }}
                                             bind:value={cartItem.quantity}
                                             disabled={cartItem.quantityUpdating}
                                         >

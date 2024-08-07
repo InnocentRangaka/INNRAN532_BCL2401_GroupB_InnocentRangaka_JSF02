@@ -20,6 +20,7 @@
     </p>
     <div class="mt-10 flex items-center justify-center gap-4">
       <a
+        href="#/"
         on:click={goBack}
         class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
       >
@@ -38,7 +39,7 @@
       </a>
       <span class="min-h-4 border-r border-gray-400 tracking-wider"></span>
       <a
-        href="/"
+        href="#/"
         class="cursor-pointer rounded-md hover:text-cyan-900 hover:underline py-2.5 font-semibold focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-cyan-600"
       >
         <span class="flex h-full items-center text-left">
